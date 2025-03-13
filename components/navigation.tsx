@@ -5,6 +5,14 @@ export function Navigation() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [isScrolled, setIsScrolled] = useState(false)
 
+  const scrollToSection = (sectionId: string) => {
+    const element = document.getElementById(sectionId);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+      setIsMobileMenuOpen(false);
+    }
+  };
+
   // Handle scroll effect
   useEffect(() => {
     const handleScroll = () => {
@@ -26,6 +34,11 @@ export function Navigation() {
     return () => document.removeEventListener('click', handleClickOutside)
   }, [isMobileMenuOpen])
 
+  const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, sectionId: string) => {
+    e.preventDefault();
+    scrollToSection(sectionId);
+  };
+
   return (
     <nav className={`nav-container ${isScrolled ? 'nav-scrolled' : ''}`}>
       <div className="nav-content">
@@ -42,12 +55,12 @@ export function Navigation() {
 
         {/* Desktop Navigation */}
         <div className="nav-links">
-          <a href="#solutions" className="nav-link">Solutions</a>
-          <a href="#benefits" className="nav-link">Benefits</a>
-          <a href="#how-it-works" className="nav-link">How it Works</a>
-          <a href="#integrations" className="nav-link">Integrations</a>
-          <a href="#faqs" className="nav-link">FAQs</a>
-          <a href="#pricing" className="nav-link">Pricing</a>
+          <a href="#solutions" className="nav-link" onClick={(e) => handleNavClick(e, 'solutions')}>Solutions</a>
+          <a href="#benefits" className="nav-link" onClick={(e) => handleNavClick(e, 'benefits')}>Benefits</a>
+          <a href="#how-it-works" className="nav-link" onClick={(e) => handleNavClick(e, 'how-it-works')}>How it Works</a>
+          <a href="#integrations" className="nav-link" onClick={(e) => handleNavClick(e, 'integrations')}>Integrations</a>
+          <a href="#faqs" className="nav-link" onClick={(e) => handleNavClick(e, 'faqs')}>FAQs</a>
+          <a href="#pricing" className="nav-link" onClick={(e) => handleNavClick(e, 'pricing')}>Pricing</a>
         </div>
 
         {/* Mobile Menu Button */}
@@ -77,12 +90,12 @@ export function Navigation() {
         className={`mobile-menu ${isMobileMenuOpen ? 'mobile-menu-open' : ''}`}
         onClick={(e) => e.stopPropagation()}
       >
-        <a href="#solutions" className="mobile-link">Solutions</a>
-        <a href="#benefits" className="mobile-link">Benefits</a>
-        <a href="#how-it-works" className="mobile-link">How it Works</a>
-        <a href="#integrations" className="mobile-link">Integrations</a>
-        <a href="#faqs" className="mobile-link">FAQs</a>
-        <a href="#pricing" className="mobile-link">Pricing</a>
+        <a href="#solutions" className="mobile-link" onClick={(e) => handleNavClick(e, 'solutions')}>Solutions</a>
+        <a href="#benefits" className="mobile-link" onClick={(e) => handleNavClick(e, 'benefits')}>Benefits</a>
+        <a href="#how-it-works" className="mobile-link" onClick={(e) => handleNavClick(e, 'how-it-works')}>How it Works</a>
+        <a href="#integrations" className="mobile-link" onClick={(e) => handleNavClick(e, 'integrations')}>Integrations</a>
+        <a href="#faqs" className="mobile-link" onClick={(e) => handleNavClick(e, 'faqs')}>FAQs</a>
+        <a href="#pricing" className="mobile-link" onClick={(e) => handleNavClick(e, 'pricing')}>Pricing</a>
         <div className="mobile-auth">
           <button className="nav-button-secondary w-full">Log in</button>
           <button className="nav-button-primary w-full">Sign up</button>
