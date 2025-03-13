@@ -37,9 +37,50 @@ export default function LandingPage() {
           </div>
         </div>
 
-        <div className="max-w-4xl mx-auto mb-16">
-          <h2 className="text-2xl font-semibold text-center mb-8">See How It Works</h2>
-          <VideoPlayer />
+        <div className="max-w-7xl mx-auto mb-16 bg-white rounded-2xl shadow-lg overflow-hidden">
+          <div className="flex flex-col md:flex-row items-center">
+            <div className="w-full md:w-1/2 p-8 md:p-12">
+              <h2 className="text-3xl font-bold mb-6">See How It Works</h2>
+              <div className="space-y-6">
+                <div className="flex items-start space-x-4">
+                  <div className="flex-shrink-0">
+                    <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center">
+                      <span className="text-blue-600 font-semibold">1</span>
+                    </div>
+                  </div>
+                  <div>
+                    <h3 className="font-semibold mb-1">Choose Your Content</h3>
+                    <p className="text-gray-600">Select from K-dramas, music videos, or variety shows that match your level.</p>
+                  </div>
+                </div>
+                <div className="flex items-start space-x-4">
+                  <div className="flex-shrink-0">
+                    <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center">
+                      <span className="text-blue-600 font-semibold">2</span>
+                    </div>
+                  </div>
+                  <div>
+                    <h3 className="font-semibold mb-1">Interactive Learning</h3>
+                    <p className="text-gray-600">Click any word for instant translations and add to your vocabulary list.</p>
+                  </div>
+                </div>
+                <div className="flex items-start space-x-4">
+                  <div className="flex-shrink-0">
+                    <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center">
+                      <span className="text-blue-600 font-semibold">3</span>
+                    </div>
+                  </div>
+                  <div>
+                    <h3 className="font-semibold mb-1">Track Progress</h3>
+                    <p className="text-gray-600">Monitor your learning journey with detailed progress analytics.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="w-full md:w-1/2 bg-gray-50 p-6">
+              <VideoPlayer />
+            </div>
+          </div>
         </div>
 
         <div className="max-w-md mx-auto">
