@@ -1,15 +1,25 @@
 "use client"
 import { useState, useEffect } from 'react'
+import Image from 'next/image'
 
 export function Navigation() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [isScrolled, setIsScrolled] = useState(false)
 
   const scrollToSection = (sectionId: string) => {
-    const element = document.getElementById(sectionId);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
-      setIsMobileMenuOpen(false);
+    try {
+      const element = document.getElementById(sectionId);
+      if (element) {
+        // Fallback for browsers that don't support smooth scrolling
+        if ('scrollBehavior' in document.documentElement.style) {
+          element.scrollIntoView({ behavior: 'smooth' });
+        } else {
+          element.scrollIntoView();
+        }
+        setIsMobileMenuOpen(false);
+      }
+    } catch (error) {
+      console.error('Error scrolling to section:', error);
     }
   };
 
@@ -43,14 +53,14 @@ export function Navigation() {
     <nav className={`nav-container ${isScrolled ? 'nav-scrolled' : ''}`}>
       <div className="nav-content">
         <div className="nav-logo">
-          <svg 
-            className="h-8 w-8 text-blue-600" 
-            viewBox="0 0 24 24" 
-            fill="currentColor"
-          >
-            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
-          </svg>
-          <span className="text-xl font-bold text-blue-600 ml-2">HanJaemi</span>
+          <Image 
+            src="/logov1_.png"
+            alt="HanJaemi Logo" 
+            width={100} 
+            height={100}
+            className="h-25 w-25 object-contain"
+          />
+          <span className="text-xl font-bold text-blue-600 ml-2"></span>
         </div>
 
         {/* Desktop Navigation */}
