@@ -109,7 +109,7 @@
 }
 
 .nav-logo {
-  @apply flex-shrink-0 flex items-center z-20;
+  @apply flex-shrink-0 flex items-center z-20 hover:opacity-90 transition-opacity cursor-pointer;
 }
 
 .nav-links {

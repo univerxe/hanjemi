@@ -30,7 +30,14 @@ export function Navigation() {
     <nav className={`nav-container ${isScrolled ? 'nav-scrolled' : ''}`}>
       <div className="nav-content">
         <div className="nav-logo">
-          <span className="text-xl font-bold text-blue-600">HanJaemi</span>
+          <svg 
+            className="h-8 w-8 text-blue-600" 
+            viewBox="0 0 24 24" 
+            fill="currentColor"
+          >
+            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+          </svg>
+          <span className="text-xl font-bold text-blue-600 ml-2">HanJaemi</span>
         </div>
 
         {/* Desktop Navigation */}
@@ -40,7 +47,7 @@ export function Navigation() {
           <a href="#how-it-works" className="nav-link">How it Works</a>
           <a href="#integrations" className="nav-link">Integrations</a>
           <a href="#faqs" className="nav-link">FAQs</a>
-          <a href="#pricing" className="nav-link-special">Pricing</a>
+          <a href="#pricing" className="nav-link">Pricing</a>
         </div>
 
         {/* Mobile Menu Button */}
