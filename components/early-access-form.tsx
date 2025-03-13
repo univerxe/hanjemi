@@ -42,7 +42,7 @@ export function EarlyAccessForm() {
 
       setIsSubmitted(true)
       setEmail("")
-    } catch (err) {
+    } catch (_) { // Changed 'err' to '_'
       setError("Something went wrong. Please try again.")
     } finally {
       setIsSubmitting(false)
@@ -80,6 +80,9 @@ export function EarlyAccessForm() {
 
         <p className="text-xs text-slate-500 text-center">
           We respect your privacy and will never share your information.
+        </p>
+        <p className="text-sm text-red-600">
+          We're experiencing technical difficulties. Please try again later.
         </p>
       </div>
     </form>

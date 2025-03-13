@@ -24,6 +24,8 @@ export function VideoPlayer({
   const [isMuted, setIsMuted] = useState(false)
   const [videoSource, setVideoSource] = useState<VideoSource | null>(null)
   const [isLoaded, setIsLoaded] = useState(false)
+  const [isLoading, setIsLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
   // Parse the video source on component mount
   useEffect(() => {
@@ -35,7 +37,7 @@ export function VideoPlayer({
   // Function to determine if a URL is a YouTube URL and extract the video ID
   const parseVideoSource = (url: string): VideoSource => {
     // Check if it's a YouTube URL
-    for (const [key, regex] of Object.entries(YOUTUBE_REGEX)) {
+    for (const [, regex] of Object.entries(YOUTUBE_REGEX)) {  // Remove unused key parameter
       const match = url.match(regex)
       if (match && match[1]) {
         return {
@@ -113,6 +115,14 @@ export function VideoPlayer({
 
   return (
     <div className="relative rounded-xl overflow-hidden bg-black aspect-video shadow-xl">
+      {isLoading && (
+        <div className="absolute inset-0 bg-gray-100 animate-pulse" />
+      )}
+      {error && (
+        <div className="absolute inset-0 flex items-center justify-center bg-gray-50">
+          <p className="text-gray-500">Video unavailable</p>
+        </div>
+      )}
       {videoSource.type === "direct" ? (
         // Direct video file player
         <video
@@ -122,6 +132,8 @@ export function VideoPlayer({
           onEnded={() => setIsPlaying(false)}
           onPlay={() => setIsPlaying(true)}
           onPause={() => setIsPlaying(false)}
+          onLoadedData={() => setIsLoading(false)}
+          onError={() => setError('Failed to load video')}
         >
           <source src={videoSource.src || undefined} type="video/mp4" />
           Your browser does not support the video tag.
@@ -136,6 +148,8 @@ export function VideoPlayer({
           frameBorder="0"
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
           allowFullScreen
+          onLoad={() => setIsLoading(false)}
+          onError={() => setError('Failed to load video')}
         ></iframe>
       )}
 
