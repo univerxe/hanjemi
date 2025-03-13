@@ -91,9 +91,22 @@ export default function LandingPage() {
 
         {/* Beta Section */}
         <div id="beta-section" className="max-w-md mx-auto transform hover:scale-105 transition-transform">
-          <div className="beta-container">
-            <h2 className="text-2xl font-semibold mb-4">Join the Beta</h2>
-            <p className="text-slate-600 mb-6">Get exclusive early access to our platform and 3 months free premium membership.</p>
+          <div className="beta-container relative">
+            <div className="absolute -top-6 right-6 w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center transform rotate-12 animate-bounce-slow">
+              <svg 
+                className="w-6 h-6 text-blue-600 transform -rotate-45" 
+                fill="none" 
+                viewBox="0 0 24 24" 
+                stroke="currentColor"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+              </svg>
+            </div>
+            <h2 className="text-2xl font-semibold mb-4">Be Among the First</h2>
+            <p className="text-slate-600 mb-6">
+              Join our exclusive beta program and receive a complimentary 3-month premium 
+              membership. Start your Korean learning journey today!
+            </p>
             <EarlyAccessForm />
           </div>
         </div>
