@@ -97,25 +97,28 @@
 }
 
 .nav-container {
-  @apply sticky top-0 z-50 w-full border-b border-slate-200 bg-white/90 backdrop-blur-sm;
+  @apply sticky top-0 z-50 w-full border-b border-slate-200 bg-white/90 backdrop-blur-sm transition-all duration-200;
+}
+
+.nav-scrolled {
+  @apply shadow-md bg-white/95;
 }
 
 .nav-content {
-  @apply container mx-auto flex h-16 items-center justify-between px-4;
+  @apply container mx-auto flex h-16 items-center justify-between px-4 relative;
 }
 
 .nav-logo {
-  @apply flex-shrink-0;
+  @apply flex-shrink-0 flex items-center z-20;
 }
 
 .nav-links {
-  @apply hidden md:flex items-center justify-center flex-1 space-x-8 px-8;
+  @apply hidden lg:flex items-center justify-center space-x-1 px-4;
 }
 
 .nav-link {
-  @apply text-sm font-medium text-gray-600 hover:text-blue-600 transition-colors relative
-    after:absolute after:left-0 after:-bottom-1 after:h-0.5 after:w-0 after:bg-blue-600
-    after:transition-all hover:after:w-full;
+  @apply px-4 py-2 text-sm font-medium text-gray-600 hover:text-blue-600 rounded-md
+    transition-colors relative hover:bg-blue-50/50;
 }
 
 .nav-link-special {
@@ -123,7 +126,7 @@
 }
 
 .nav-auth {
-  @apply hidden md:flex items-center justify-end space-x-4 flex-shrink-0;
+  @apply hidden lg:flex items-center justify-end space-x-4 flex-shrink-0;
 }
 
 .nav-button-secondary {
@@ -136,14 +139,34 @@
 }
 
 .mobile-menu {
-  @apply md:hidden absolute top-16 inset-x-0 bg-white border-b border-slate-200 px-4 py-2 space-y-2;
+  @apply fixed inset-x-0 top-[64px] bg-white/95 backdrop-blur-sm border-b border-slate-200
+    transition-all duration-200 ease-in-out transform 
+    h-[calc(100vh-64px)] overflow-y-auto lg:hidden
+    opacity-0 pointer-events-none;
+}
+
+.mobile-menu-open {
+  @apply opacity-100 pointer-events-auto;
 }
 
 .mobile-link {
-  @apply block py-2 text-base font-medium text-gray-600 hover:text-blue-600 transition-colors;
+  @apply block w-full px-4 py-3 text-base font-medium text-gray-600 
+    hover:text-blue-600 hover:bg-blue-50/50 transition-colors;
 }
 
 .mobile-auth {
-  @apply grid gap-2 pt-4 pb-2;
+  @apply grid gap-2 p-4 border-t border-slate-200 mt-4;
+}
+
+@screen sm {
+  .nav-content {
+    @apply px-6;
+  }
+}
+
+@screen lg {
+  .nav-content {
+    @apply px-8;
+  }
 }
 

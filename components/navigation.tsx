@@ -1,11 +1,33 @@
 "use client"
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 export function Navigation() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const [isScrolled, setIsScrolled] = useState(false)
+
+  // Handle scroll effect
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 20)
+    }
+    window.addEventListener('scroll', handleScroll)
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
+
+  // Close mobile menu when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      const target = e.target as HTMLElement
+      if (isMobileMenuOpen && !target.closest('.nav-container')) {
+        setIsMobileMenuOpen(false)
+      }
+    }
+    document.addEventListener('click', handleClickOutside)
+    return () => document.removeEventListener('click', handleClickOutside)
+  }, [isMobileMenuOpen])
 
   return (
-    <nav className="nav-container">
+    <nav className={`nav-container ${isScrolled ? 'nav-scrolled' : ''}`}>
       <div className="nav-content">
         <div className="nav-logo">
           <span className="text-xl font-bold text-blue-600">HanJaemi</span>
@@ -23,7 +45,7 @@ export function Navigation() {
 
         {/* Mobile Menu Button */}
         <button 
-          className="md:hidden p-2 text-gray-600 hover:text-blue-600 transition-colors"
+          className="lg:hidden p-2 text-gray-600 hover:text-blue-600 transition-colors" // Changed from md:hidden to lg:hidden
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
           aria-label="Toggle menu"
         >
@@ -43,8 +65,11 @@ export function Navigation() {
         </div>
       </div>
 
-      {/* Mobile Menu with transition */}
-      <div className={`mobile-menu transform transition-transform duration-200 ease-in-out ${isMobileMenuOpen ? 'translate-y-0' : '-translate-y-full md:hidden'}`}>
+      {/* Mobile Menu with improved transition */}
+      <div 
+        className={`mobile-menu ${isMobileMenuOpen ? 'mobile-menu-open' : ''}`}
+        onClick={(e) => e.stopPropagation()}
+      >
         <a href="#solutions" className="mobile-link">Solutions</a>
         <a href="#benefits" className="mobile-link">Benefits</a>
         <a href="#how-it-works" className="mobile-link">How it Works</a>
