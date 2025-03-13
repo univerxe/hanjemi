@@ -68,8 +68,82 @@
   }
 }
 
+/* Gradient Animations */
+.gradient-text {
+  @apply bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent 
+    animate-gradient bg-300% hover:animate-gradient-fast;
+}
+
+.gradient-border {
+  @apply relative before:absolute before:-inset-1 before:rounded-xl
+    before:bg-gradient-to-r before:from-blue-600 before:to-indigo-600
+    before:animate-border-rotate before:p-1;
+}
+
+/* Enhanced Card Animations */
 .feature-card {
-  @apply bg-white p-6 rounded-xl shadow-sm border border-slate-200;
+  @apply bg-white p-6 rounded-xl shadow-sm border border-slate-200
+    transform transition-all duration-300 hover:scale-105
+    hover:shadow-xl hover:border-blue-200 hover:bg-blue-50/30;
+}
+
+/* Reveal Animations */
+.reveal {
+  @apply opacity-0 transition-all duration-700;
+}
+
+.reveal-from-bottom {
+  @apply translate-y-10;
+}
+
+.reveal-from-left {
+  @apply -translate-x-20;
+}
+
+.reveal-from-right {
+  @apply translate-x-20;
+}
+
+.reveal.active {
+  @apply opacity-100 translate-x-0 translate-y-0;
+}
+
+/* Enhanced Button Animations */
+.nav-button-primary {
+  @apply rounded-lg bg-blue-600 px-5 py-2.5 text-sm font-medium text-white
+    transition-all duration-300 transform
+    hover:bg-blue-700 hover:scale-105 hover:shadow-lg
+    active:scale-95 active:bg-blue-800
+    focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2;
+}
+
+/* New keyframes for animations */
+@keyframes gradient {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes border-rotate {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Add to theme.extend.animation in tailwind.config.ts */
+.animate-gradient {
+  animation: gradient 6s linear infinite;
+}
+
+.animate-gradient-fast {
+  animation: gradient 3s linear infinite;
+}
+
+.animate-border-rotate {
+  animation: border-rotate 4s linear infinite;
+}
+
+.bg-300 {
+  background-size: 300% 300%;
 }
 
 .feature-title {
@@ -133,11 +207,6 @@
   @apply px-4 py-2 text-sm font-medium text-gray-700 hover:text-blue-600 transition-colors;
 }
 
-.nav-button-primary {
-  @apply rounded-lg bg-blue-600 px-5 py-2.5 text-sm font-medium text-white hover:bg-blue-700 
-    transition-colors shadow-sm hover:shadow-md;
-}
-
 .mobile-menu {
   @apply fixed inset-x-0 top-[64px] bg-white/95 backdrop-blur-sm border-b border-slate-200
     transition-all duration-200 ease-in-out transform 
@@ -168,5 +237,52 @@
   .nav-content {
     @apply px-8;
   }
+}
+
+/* Landing Page Sections */
+.hero-section {
+  @apply relative mb-24;
+}
+
+.solutions-grid {
+  @apply grid md:grid-cols-3 gap-8 mb-16;
+}
+
+.how-it-works-section {
+  @apply max-w-7xl mx-auto mb-16 bg-white rounded-2xl shadow-lg overflow-hidden transform 
+    hover:scale-[1.02] transition-transform;
+}
+
+.how-it-works-content {
+  @apply flex flex-col md:flex-row items-center;
+}
+
+.how-it-works-text {
+  @apply w-full md:w-1/2 p-8 md:p-12;
+}
+
+.how-it-works-video {
+  @apply w-full md:w-1/2 bg-gray-50 p-6;
+}
+
+.step-number {
+  @apply w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center;
+}
+
+.step-content {
+  @apply flex items-start space-x-4;
+}
+
+.beta-section {
+  @apply max-w-md mx-auto transform hover:scale-105 transition-transform;
+}
+
+.beta-icon {
+  @apply absolute -top-6 right-6 w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center 
+    transform rotate-12 animate-bounce;
+}
+
+.page-footer {
+  @apply py-8 text-center text-slate-500;
 }
 

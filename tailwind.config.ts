@@ -68,10 +68,25 @@ const config = {
           from: { height: "var(--radix-accordion-content-height)" },
           to: { height: "0" },
         },
+        gradient: {
+          '0%, 100%': { backgroundPosition: '0% 50%' },
+          '50%': { backgroundPosition: '100% 50%' },
+        },
+        'border-rotate': {
+          '0%': { transform: 'rotate(0deg)' },
+          '100%': { transform: 'rotate(360deg)' },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+        "bounce-slow": "bounce 3s linear infinite",
+        'gradient': 'gradient 6s linear infinite',
+        'gradient-fast': 'gradient 3s linear infinite',
+        'border-rotate': 'border-rotate 4s linear infinite',
+      },
+      backgroundSize: {
+        '300%': '300% 300%',
       },
     },
   },

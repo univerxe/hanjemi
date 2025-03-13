@@ -3,12 +3,18 @@ import { PrismaClient } from '@prisma/client'
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library'
 import { isValidEmail } from '@/utils/email'
 
-const prisma = new PrismaClient()
+const globalForPrisma = globalThis as unknown as {
+  prisma: PrismaClient | undefined
+}
+
+const prisma = globalForPrisma.prisma ?? new PrismaClient()
+
+if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma
 
 type SubscribeResponse = {
   success: boolean;
   message: string;
-  subscriber?: any;
+  subscriber?: Awaited<ReturnType<typeof prisma.emailSubscriber.create>>;
   error?: string;
 };
 

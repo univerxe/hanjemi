@@ -1,20 +1,43 @@
+"use client"
+import { useEffect } from 'react'
 import { VideoPlayer } from "@/components/video-player"
 import { EarlyAccessForm } from "@/components/early-access-form"
 import { Navigation } from "@/components/navigation"
 
 export default function LandingPage() {
+  useEffect(() => {
+    const observerCallback: IntersectionObserverCallback = (entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('active');
+        }
+      });
+    };
+
+    const observer = new IntersectionObserver(observerCallback, {
+      threshold: 0.1
+    });
+
+    document.querySelectorAll('.reveal').forEach((element) => {
+      observer.observe(element);
+    });
+
+    return () => observer.disconnect();
+  }, []);
+
   return (
     <div className="min-h-screen">
       <Navigation />
       <main className="container mx-auto px-4 py-16 md:py-24">
+    
         {/* Hero Section */}
-        <div className="hero-section mb-24">
+        <div className="hero-section reveal reveal-from-bottom">
           <div className="hero-bg"></div>
           <div className="relative flex flex-col items-center text-center mb-12">
             <h1 className="main-title">
               <span className="gradient-text">Master Korean</span>, Your Way
             </h1>
-            <p className="main-subtitle animate-float">
+            <p className="main-subtitle">
               Interactive learning platform combining entertainment and structured lessons for TOPIK success
             </p>
             <div className="mt-8 space-x-4">
@@ -27,9 +50,13 @@ export default function LandingPage() {
         </div>
 
         {/* Solutions Section */}
-        <div id="solutions" className="grid md:grid-cols-3 gap-8 mb-16">
+        <div id="solutions" className="solutions-grid">
           {features.map((feature, index) => (
-            <div key={index} className="feature-card group">
+            <div key={index} 
+              className={`feature-card group reveal ${
+                index % 2 === 0 ? 'reveal-from-left' : 'reveal-from-right'
+              }`}
+            >
               <div className="mb-4 text-blue-600">
                 {feature.icon}
               </div>
@@ -43,14 +70,14 @@ export default function LandingPage() {
         </div>
 
         {/* Benefits & How it Works Section */}
-        <div id="how-it-works" className="max-w-7xl mx-auto mb-16 bg-white rounded-2xl shadow-lg overflow-hidden transform hover:scale-[1.02] transition-transform">
-          <div className="flex flex-col md:flex-row items-center">
-            <div className="w-full md:w-1/2 p-8 md:p-12">
+        <div id="how-it-works" className="how-it-works-section reveal reveal-from-bottom">
+          <div className="how-it-works-content">
+            <div className="how-it-works-text">
               <h2 className="text-3xl font-bold mb-6">See How It Works</h2>
               <div className="space-y-6">
-                <div className="flex items-start space-x-4">
+                <div className="step-content">
                   <div className="flex-shrink-0">
-                    <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center">
+                    <div className="step-number">
                       <span className="text-blue-600 font-semibold">1</span>
                     </div>
                   </div>
@@ -59,9 +86,9 @@ export default function LandingPage() {
                     <p className="text-gray-600">Select from K-dramas, music videos, or variety shows that match your level.</p>
                   </div>
                 </div>
-                <div className="flex items-start space-x-4">
+                <div className="step-content">
                   <div className="flex-shrink-0">
-                    <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center">
+                    <div className="step-number">
                       <span className="text-blue-600 font-semibold">2</span>
                     </div>
                   </div>
@@ -70,9 +97,9 @@ export default function LandingPage() {
                     <p className="text-gray-600">Click any word for instant translations and add to your vocabulary list.</p>
                   </div>
                 </div>
-                <div className="flex items-start space-x-4">
+                <div className="step-content">
                   <div className="flex-shrink-0">
-                    <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center">
+                    <div className="step-number">
                       <span className="text-blue-600 font-semibold">3</span>
                     </div>
                   </div>
@@ -83,16 +110,17 @@ export default function LandingPage() {
                 </div>
               </div>
             </div>
-            <div className="w-full md:w-1/2 bg-gray-50 p-6">
+            <div className="how-it-works-video">
               <VideoPlayer />
             </div>
           </div>
-        </div>
+        </div>    
+
 
         {/* Beta Section */}
-        <div id="beta-section" className="max-w-md mx-auto transform hover:scale-105 transition-transform">
-          <div className="beta-container relative">
-            <div className="absolute -top-6 right-6 w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center transform rotate-12 animate-bounce-slow">
+        <div id="beta-section" className="beta-section reveal reveal-from-bottom">
+          <div className="beta-container">
+            <div className="beta-icon">
               <svg 
                 className="w-6 h-6 text-blue-600 transform -rotate-45" 
                 fill="none" 
@@ -111,7 +139,7 @@ export default function LandingPage() {
           </div>
         </div>
       </main>
-      <footer className="py-8 text-center text-slate-500">
+      <footer className="page-footer">
         <p>© {new Date().getFullYear()} HanJaemi. All rights reserved.</p>
       </footer>
     </div>

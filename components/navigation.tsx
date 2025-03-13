@@ -1,6 +1,7 @@
 "use client"
 import { useState, useEffect } from 'react'
 import Image from 'next/image'
+import Link from 'next/link'
 
 export function Navigation() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
@@ -52,16 +53,16 @@ export function Navigation() {
   return (
     <nav className={`nav-container ${isScrolled ? 'nav-scrolled' : ''}`}>
       <div className="nav-content">
-        <div className="nav-logo">
-          <Image 
+        <Link href="/" className="nav-logo">
+          <Image
             src="/logov1_.png"
-            alt="HanJaemi Logo" 
-            width={100} 
-            height={100}
-            className="h-25 w-25 object-contain"
+            alt="Hanjemi Logo"
+            width={120}
+            height={32}
+            className="h-8 w-auto"
+            priority
           />
-          <span className="text-xl font-bold text-blue-600 ml-2"></span>
-        </div>
+        </Link>
 
         {/* Desktop Navigation */}
         <div className="nav-links">

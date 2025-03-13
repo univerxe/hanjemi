@@ -42,7 +42,7 @@ export function EarlyAccessForm() {
 
       setIsSubmitted(true)
       setEmail("")
-    } catch (_) { // Changed 'err' to '_'
+    } catch { // Removed unused variable '_'
       setError("Something went wrong. Please try again.")
     } finally {
       setIsSubmitting(false)
@@ -54,7 +54,7 @@ export function EarlyAccessForm() {
       <div className="flex flex-col items-center py-4 text-center">
         <CheckCircle2 className="text-green-500 mb-2" size={48} />
         <h3 className="text-xl font-medium mb-2">Thank You!</h3>
-        <p className="text-slate-600">We've added you to our early access list. We'll notify you when we launch!</p>
+        <p className="text-slate-600">We&apos;ve added you to our early access list. We&apos;ll notify you when we launch!</p>
       </div>
     )
   }
@@ -81,9 +81,7 @@ export function EarlyAccessForm() {
         <p className="text-xs text-slate-500 text-center">
           We respect your privacy and will never share your information.
         </p>
-        <p className="text-sm text-red-600">
-          We're experiencing technical difficulties. Please try again later.
-        </p>
+
       </div>
     </form>
   )
