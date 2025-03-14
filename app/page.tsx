@@ -69,17 +69,17 @@ export default function Home() {
         )}
       </header>
 
-      <div className="flex-1 flex flex-col items-center justify-center p-4 sm:p-8">
+      <div className="flex-1 flex flex-col items-center pt-12 sm:pt-16 p-4 sm:p-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="text-center mb-8 sm:mb-12"
+          className="text-center mb-6 sm:mb-8"
         >
-          <h1 className="text-4xl sm:text-5xl font-bold mb-4 tracking-tight">HanJaemi</h1>
-          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+            <h1 className="text-3xl sm:text-4xl font-bold mb-2 tracking-tight">HanJaemi</h1>
+            <p className="text-lg text-muted-foreground max-w-xl mx-auto">
             Your journey to mastering Korean starts here
-          </p>
+            </p>
         </motion.div>
 
         <div className="w-full max-w-6xl grid grid-cols-1 lg:grid-cols-7 gap-6 lg:gap-8 items-center">
