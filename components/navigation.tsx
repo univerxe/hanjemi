@@ -54,14 +54,17 @@ export function Navigation() {
     <nav className={`nav-container ${isScrolled ? 'nav-scrolled' : ''}`}>
       <div className="nav-content">
         <Link href="/" className="nav-logo">
-          <Image
-            src="/logov1_.png"
-            alt="Hanjemi Logo"
-            width={120}
-            height={32}
-            className="h-8 w-auto"
-            priority
-          />
+          <div className="flex items-center gap-2">
+            <Image
+              src="/logo_dark.png"
+              alt="Hanjemi Logo"
+              width={120}
+              height={32}
+              className="h-8 w-auto"
+              priority
+            />
+            <span className="font-medium text-xl text-gray-900">HanJaemi</span>
+          </div>
         </Link>
 
         {/* Desktop Navigation */}

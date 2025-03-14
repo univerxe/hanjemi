@@ -74,7 +74,7 @@ export function EarlyAccessForm() {
           {error && <p className="mt-1 text-sm text-red-500">{error}</p>}
         </div>
 
-        <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700" disabled={isSubmitting}>
+        <Button type="submit" className="w-full bg-black hover:bg-gray-800" disabled={isSubmitting}>
           {isSubmitting ? "Submitting..." : "Get Early Access"}
         </Button>
 
