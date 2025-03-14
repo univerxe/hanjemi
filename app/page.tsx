@@ -1,101 +1,207 @@
-import Image from "next/image";
+"use client"
+
+import type React from "react"
+
+import { useState, useEffect } from "react"
+import { useTheme } from "next-themes"
+import { Moon, Sun, Mail, Send, ArrowRight, CheckCircle2 } from "lucide-react"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Card, CardContent } from "@/components/ui/card"
+import VideoPlayer from "@/components/video-player"
+import Image from "next/image"
+import { motion, AnimatePresence } from "@/components/motion"
 
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+  const [email, setEmail] = useState("")
+  const [submitted, setSubmitted] = useState(false)
+  const { theme, setTheme } = useTheme()
+  const [mounted, setMounted] = useState(false)
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
+  // Fix hydration issues with theme
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    // Here you would typically send the email to your backend
+    console.log("Email submitted:", email)
+    setSubmitted(true)
+    // Note: We no longer reset the form after submission
+    // The thank you message will persist until page refresh
+  }
+
+  // Determine accent color based on theme
+  const accentColor =
+    theme === "dark"
+      ? "rgba(59, 130, 246, 0.6)" // Brighter blue for dark mode
+      : "rgba(99, 102, 241, 0.4)" // Brighter indigo for light mode
+
+  return (
+    <main className="min-h-screen flex flex-col bg-gradient-to-b from-background to-muted/30">
+      <header className="w-full p-4 flex justify-between items-center border-b backdrop-blur-sm bg-background/80 sticky top-0 z-50">
+        <div className="flex items-center gap-2">
+          {/* Logo Placement */}
+          <div className="relative h-10 w-10 overflow-hidden rounded-md">
             <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
+              src="/placeholder.svg?height=40&width=40"
+              alt="HanJaemi Logo"
+              width={40}
+              height={40}
+              className="object-contain"
+              priority
             />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+          </div>
+          <span className="font-bold text-xl hidden sm:inline-block">HanJaemi</span>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
+
+        {mounted && (
+          <Button
+            variant="outline"
+            size="icon"
+            onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+            aria-label="Toggle theme"
+            className="rounded-full"
+          >
+            {theme === "dark" ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+          </Button>
+        )}
+      </header>
+
+      <div className="flex-1 flex flex-col items-center justify-center p-4 sm:p-8">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="text-center mb-8 sm:mb-12"
         >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
+          <h1 className="text-4xl sm:text-5xl font-bold mb-4 tracking-tight">HanJaemi</h1>
+          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+            Your journey to mastering Korean starts here
+          </p>
+        </motion.div>
+
+        <div className="w-full max-w-6xl grid grid-cols-1 lg:grid-cols-7 gap-6 lg:gap-8 items-center">
+          {/* Enhanced Email Collection Form - Now Smaller */}
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+            className="lg:col-span-2"
+          >
+            <Card className="overflow-hidden border shadow-md backdrop-blur-sm bg-card/80 relative max-w-sm mx-auto lg:mx-0 lg:ml-auto">
+              {/* Decorative elements - smaller */}
+              <div className="absolute top-0 right-0 w-16 h-16 bg-primary/5 rounded-full -mr-8 -mt-8 z-0"></div>
+              <div className="absolute bottom-0 left-0 w-12 h-12 bg-primary/5 rounded-full -ml-6 -mb-6 z-0"></div>
+
+              <CardContent className="p-3 sm:p-4 relative z-10">
+                <AnimatePresence mode="wait">
+                  {submitted ? (
+                    <motion.div
+                      key="success"
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -10 }}
+                      className="flex flex-col items-center justify-center py-4 text-center space-y-2"
+                    >
+                      <motion.div
+                        initial={{ scale: 0 }}
+                        animate={{ scale: 1 }}
+                        transition={{ type: "spring", stiffness: 200, damping: 10 }}
+                        className="rounded-full bg-primary/10 p-2"
+                      >
+                        <CheckCircle2 className="w-8 h-8 text-primary" />
+                      </motion.div>
+                      <h3 className="text-xl font-bold">Thank You!</h3>
+                      <p className="text-sm text-muted-foreground max-w-md">
+                        We've received your email. We'll keep you updated on HanJaemi's launch and send you exclusive
+                        early access.
+                      </p>
+                    </motion.div>
+                  ) : (
+                    <motion.div
+                      key="form"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      className="space-y-3"
+                    >
+                      <div className="space-y-1">
+                        <div className="flex items-center gap-1">
+                          <h2 className="text-lg font-semibold">Join the Waitlist</h2>
+                          <Send className="h-4 w-4 text-primary" />
+                        </div>
+                        <p className="text-xs text-muted-foreground">
+                          After watching our introduction, be the first to experience HanJaemi when we launch.
+                        </p>
+                      </div>
+
+                      <form onSubmit={handleSubmit} className="space-y-3">
+                        <div className="relative">
+                          <Mail className="absolute left-2 top-2 h-4 w-4 text-muted-foreground" />
+                          <Input
+                            id="email"
+                            type="email"
+                            placeholder="your@email.com"
+                            className="pl-8 h-8 text-xs border focus:border-primary transition-all duration-300"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            required
+                          />
+                        </div>
+
+                        <motion.div
+                          whileHover={{ scale: 1.02 }}
+                          whileTap={{ scale: 0.98 }}
+                          transition={{ type: "spring", stiffness: 400, damping: 17 }}
+                        >
+                          <Button
+                            type="submit"
+                            className="w-full h-8 text-xs font-medium group overflow-hidden relative"
+                            size="sm"
+                          >
+                            <span className="flex items-center justify-center gap-1 group-hover:-translate-y-8 transition-transform duration-300">
+                              Get Early Access
+                              <ArrowRight className="h-3 w-3" />
+                            </span>
+                            <span className="absolute inset-0 flex items-center justify-center gap-1 translate-y-8 group-hover:translate-y-0 transition-transform duration-300">
+                              Send
+                              <Send className="h-3 w-3" />
+                            </span>
+                          </Button>
+                        </motion.div>
+
+                        <p className="text-[10px] text-center text-muted-foreground">
+                          By signing up, you agree to our{" "}
+                          <a href="#" className="underline underline-offset-2 hover:text-primary transition-colors">
+                            Terms & Conditions
+                          </a>
+                        </p>
+                      </form>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </CardContent>
+            </Card>
+          </motion.div>
+
+          {/* Video Player with enhanced background - Now Larger */}
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5, delay: 0.4 }}
+            className="relative p-4 lg:col-span-5"
+          >
+            <VideoPlayer src="https://www.youtube.com/embed/dQw4w9WgXcQ" isYouTube={true} accentColor={accentColor} />
+          </motion.div>
+        </div>
+      </div>
+
+      <footer className="w-full p-6 text-center text-sm text-muted-foreground border-t backdrop-blur-sm bg-background/80">
+        <div className="max-w-6xl mx-auto">© {new Date().getFullYear()} HanJaemi. All rights reserved.</div>
       </footer>
-    </div>
-  );
+    </main>
+  )
 }
+
