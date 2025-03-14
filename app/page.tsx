@@ -193,7 +193,7 @@ export default function Home() {
             transition={{ duration: 0.5, delay: 0.4 }}
             className="relative p-4 lg:col-span-5"
           >
-            <VideoPlayer src="https://youtu.be/QtmAYsCBgQY" isYouTube={true} accentColor={accentColor} />
+            <VideoPlayer src="https://www.youtube.com/watch?v=xAwB9lQnxAY&pp=ygUac2xvdyBjb2xvciBjaGFuZ2luZyBsaWdodHM%3D" isYouTube={true} accentColor={accentColor} />
           </motion.div>
         </div>
       </div>
