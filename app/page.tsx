@@ -100,7 +100,7 @@ export default function LandingPage() {
                 <div className="step-content">
                   <div className="flex-shrink-0">
                     <div className="step-number">
-                      <span className="text-blue-600 font-semibold">3</span>
+                      <span className="text-black-600 font-semibold">3</span>
                     </div>
                   </div>
                   <div>
