@@ -45,7 +45,7 @@ export default function Home() {
           {/* Logo Placement */}
           <div className="relative h-10 w-10 overflow-hidden rounded-md">
             <Image
-              src="/placeholder.svg?height=40&width=40"
+              src="/logo_dark.png"
               alt="HanJaemi Logo"
               width={40}
               height={40}
@@ -193,7 +193,7 @@ export default function Home() {
             transition={{ duration: 0.5, delay: 0.4 }}
             className="relative p-4 lg:col-span-5"
           >
-            <VideoPlayer src="https://www.youtube.com/embed/dQw4w9WgXcQ" isYouTube={true} accentColor={accentColor} />
+            <VideoPlayer src="https://youtu.be/QtmAYsCBgQY" isYouTube={true} accentColor={accentColor} />
           </motion.div>
         </div>
       </div>

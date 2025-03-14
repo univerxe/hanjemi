@@ -6,33 +6,38 @@ import { Play, Pause, Volume2, VolumeX, Maximize, SkipForward, Settings } from "
 import { Button } from "@/components/ui/button"
 import { Slider } from "@/components/ui/slider"
 import Image from "next/image"
+import { getVideoType, getEmbedUrl } from "@/utils/video-helpers"
 
 interface VideoPlayerProps {
-  src: string
-  isYouTube?: boolean
-  accentColor?: string
-  thumbnailUrl?: string
+  src: string;
+  isYouTube?: boolean;
+  accentColor?: string;
+  thumbnailUrl?: string;
 }
 
 export default function VideoPlayer({
   src,
   isYouTube = false,
   accentColor = "#3b82f6", // Default accent color (blue)
-  thumbnailUrl = "/placeholder.svg?height=720&width=1280",
+  thumbnailUrl = "/wide_dark.png",
 }: VideoPlayerProps) {
   const [isMounted, setIsMounted] = useState(false)
   const [isPlaying, setIsPlaying] = useState(false)
-  const [showYouTube, setShowYouTube] = useState(false)
+  const [showEmbed, setShowEmbed] = useState(false)
   const [isMuted, setIsMuted] = useState(false)
   const videoRef = useRef<HTMLVideoElement>(null)
+
+  const videoType = getVideoType(src)
+  const isEmbeddable = videoType === 'youtube' || videoType === 'vimeo'
+  const embedUrl = isEmbeddable ? getEmbedUrl(src, videoType) : src
 
   useEffect(() => {
     setIsMounted(true)
   }, [])
 
   const handlePlayPause = () => {
-    if (isYouTube) {
-      setShowYouTube(true)
+    if (isEmbeddable) {
+      setShowEmbed(true)
       setIsPlaying(true)
     } else if (videoRef.current) {
       if (isPlaying) {
@@ -74,16 +79,16 @@ export default function VideoPlayer({
         transition={{ duration: 0.5 }}
         whileHover={{ scale: 1.01 }}
       >
-        {isYouTube ? (
-          showYouTube ? (
-            // YouTube iframe (shown after clicking play)
+        {isEmbeddable ? (
+          showEmbed ? (
+            // Embedded player (YouTube/Vimeo)
             <div className="relative w-full h-0 pb-[56.25%]">
               <iframe
-                src={`${src}?autoplay=1&mute=0`}
+                src={`${embedUrl}?autoplay=1&mute=0`}
                 className="absolute top-0 left-0 w-full h-full"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                 allowFullScreen
-                title="HanJaemi Introduction"
+                title="Video Player"
               />
             </div>
           ) : (
