@@ -57,7 +57,7 @@ export default function LandingPage() {
                 index % 2 === 0 ? 'reveal-from-left' : 'reveal-from-right'
               }`}
             >
-              <div className="mb-4 text-blue-600">
+              <div className="mb-4 text-black-600">
                 {feature.icon}
               </div>
               <h3 className="feature-title">{feature.title}</h3>
@@ -78,7 +78,7 @@ export default function LandingPage() {
                 <div className="step-content">
                   <div className="flex-shrink-0">
                     <div className="step-number">
-                      <span className="text-blue-600 font-semibold">1</span>
+                      <span className="text-black-600 font-semibold">1</span>
                     </div>
                   </div>
                   <div>
@@ -89,7 +89,7 @@ export default function LandingPage() {
                 <div className="step-content">
                   <div className="flex-shrink-0">
                     <div className="step-number">
-                      <span className="text-blue-600 font-semibold">2</span>
+                      <span className="text-black-600 font-semibold">2</span>
                     </div>
                   </div>
                   <div>
