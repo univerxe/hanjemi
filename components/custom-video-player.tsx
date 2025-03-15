@@ -5,12 +5,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Slider } from "@/components/ui/slider"
 import { Button } from "@/components/ui/button"
 import { Play, Pause, Volume2, VolumeX, Maximize, SkipBack, SkipForward, Settings } from "lucide-react"
-
-interface CustomVideoPlayerProps {
-  src: string
-  youtubeId?: string
-  onColorChange: (color: string) => void
-}
+import { CustomVideoPlayerProps } from "@/types/video-player"
 
 export default function CustomVideoPlayer({ src, youtubeId, onColorChange }: CustomVideoPlayerProps) {
   const videoRef = useRef<HTMLVideoElement>(null)
