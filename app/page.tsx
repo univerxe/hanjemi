@@ -90,7 +90,7 @@ export default function Home() {
             transition={{ duration: 0.5, delay: 0.2 }}
             className="relative lg:col-span-5 order-1 lg:order-2"
           >
-            <VideoPlayer src="https://www.youtube.com/watch?v=xAwB9lQnxAY&pp=ygUac2xvdyBjb2xvciBjaGFuZ2luZyBsaWdodHM%3D" isYouTube={true} accentColor={accentColor} />
+            <VideoPlayer src="https://www.youtube.com/watch?v=QtmAYsCBgQY" isYouTube={true} accentColor={accentColor} />
           </motion.div>
 
           <motion.div

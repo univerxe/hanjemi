@@ -48,6 +48,9 @@ export default function VideoPlayer({
   const [duration, setDuration] = useState(0)
   const [currentTime, setCurrentTime] = useState(0)
   const [progress, setProgress] = useState(0)
+  const [showControls, setShowControls] = useState(true)
+  const controlsTimeoutRef = useRef<NodeJS.Timeout | undefined>(undefined)
+  const [isHovering, setIsHovering] = useState(false)
 
   const videoType = getVideoType(src)
   const isEmbeddable = videoType === 'youtube' || videoType === 'vimeo'
@@ -79,8 +82,12 @@ export default function VideoPlayer({
       
       playerRef.current = new window.YT.Player(iframeRef.current, {
         events: {
+          onReady: (event: any) => {
+            const duration = event.target.getDuration();
+            setDuration(duration);
+          },
           onStateChange: (event: any) => {
-            setIsPlaying(event.data === window.YT.PlayerState.PLAYING)
+            setIsPlaying(event.data === window.YT.PlayerState.PLAYING);
           },
         },
       });
@@ -206,10 +213,11 @@ export default function VideoPlayer({
 
   // Format time helper
   const formatTime = (time: number) => {
-    const minutes = Math.floor(time / 60)
-    const seconds = Math.floor(time % 60)
-    return `${minutes}:${seconds.toString().padStart(2, '0')}`
-  }
+    if (!time || isNaN(time)) return "0:00";
+    const minutes = Math.floor(time / 60);
+    const seconds = Math.floor(time % 60);
+    return `${minutes}:${seconds.toString().padStart(2, '0')}`;
+  };
 
   // Update video progress
   const handleTimeUpdate = () => {
@@ -221,29 +229,73 @@ export default function VideoPlayer({
 
   // Handle progress bar change
   const handleProgressChange = (value: number[]) => {
-    if (videoRef.current) {
-      const newTime = (value[0] / 100) * duration
-      videoRef.current.currentTime = newTime
-      setProgress(value[0])
+    const newTime = (value[0] / 100) * duration;
+    if (isEmbeddable && playerRef.current) {
+      playerRef.current.seekTo(newTime, true);
+      setCurrentTime(newTime);
+      setProgress(value[0]);
+    } else if (videoRef.current) {
+      videoRef.current.currentTime = newTime;
+      setCurrentTime(newTime);
+      setProgress(value[0]);
     }
-  }
+  };
 
   // Add YouTube player event listeners
   useEffect(() => {
     if (!showEmbed || !isEmbeddable || !playerRef.current) return;
 
-    const interval = setInterval(() => {
-      if (playerRef.current && playerRef.current.getCurrentTime) {
-        const currentTime = playerRef.current.getCurrentTime()
-        const duration = playerRef.current.getDuration()
-        setCurrentTime(currentTime)
-        setDuration(duration)
-        setProgress((currentTime / duration) * 100)
+    const updateTime = () => {
+      if (!playerRef.current?.getCurrentTime || !playerRef.current?.getDuration) return;
+      
+      try {
+        const current = playerRef.current.getCurrentTime();
+        const total = playerRef.current.getDuration();
+        setCurrentTime(current);
+        setProgress((current / total) * 100);
+      } catch (e) {
+        console.error('Error updating time:', e);
       }
-    }, 1000)
+    };
 
-    return () => clearInterval(interval)
-  }, [showEmbed, isEmbeddable, playerRef.current])
+    const interval = setInterval(updateTime, 500);
+    return () => clearInterval(interval);
+  }, [showEmbed, isEmbeddable]);
+
+  // Function to handle mouse movement and hover
+  const handleMouseMove = () => {
+    if (isPlaying) {
+      setShowControls(true)
+      if (controlsTimeoutRef.current) {
+        clearTimeout(controlsTimeoutRef.current)
+      }
+      controlsTimeoutRef.current = setTimeout(() => {
+        setShowControls(false)
+      }, 3000)
+    }
+  }
+
+  // Handle mouse enter/leave for controls area
+  const handleMouseLeave = () => {
+    if (isPlaying) {
+      setShowControls(false)
+      if (controlsTimeoutRef.current) {
+        clearTimeout(controlsTimeoutRef.current)
+      }
+    }
+  }
+
+  // Initialize controls timeout when video starts playing
+  useEffect(() => {
+    if (isPlaying) {
+      const timer = setTimeout(() => {
+        setShowControls(false)
+      }, 5000)
+      return () => clearTimeout(timer)
+    } else {
+      setShowControls(true)
+    }
+  }, [isPlaying])
 
   if (!isMounted) {
     return <div className="w-full h-full bg-muted animate-pulse rounded-md"></div>
@@ -301,7 +353,11 @@ export default function VideoPlayer({
       />
 
       {/* Video player with glowing border */}
-      <motion.div className="relative rounded-none sm:rounded-lg md:rounded-xl overflow-hidden">
+      <motion.div 
+        className="relative rounded-none sm:rounded-lg md:rounded-xl overflow-hidden cursor-default"
+        onMouseMove={handleMouseMove}
+        onMouseLeave={handleMouseLeave}
+      >
         {/* Glowing border container - reduced inset for mobile */}
         <div className="absolute -inset-0 sm:-inset-1 rounded-none sm:rounded-lg md:rounded-xl before:absolute before:inset-0 before:rounded-none sm:before:rounded-lg md:before:rounded-xl before:blur-xl before:bg-gradient-to-r before:from-transparent before:via-white/10 before:to-transparent">
           {/* Multiple glow layers with reduced blur on mobile */}
@@ -315,7 +371,6 @@ export default function VideoPlayer({
         {/* Main video container - removed rounded corners on mobile */}
         <div className="relative z-10 rounded-none sm:rounded-lg md:rounded-xl overflow-hidden shadow-2xl bg-black">
           {isEmbeddable ? (
-            // Always show controls regardless of embed state
             <div className="relative w-full aspect-video bg-black">
               {showEmbed ? (
                 <div className="relative w-full h-0 pb-[56.25%]">
@@ -327,50 +382,6 @@ export default function VideoPlayer({
                     allowFullScreen
                     title="Video Player"
                   />
-                  
-                  {/* Controls overlay */}
-                  <div className="absolute inset-0 pointer-events-none">
-                    <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-2 sm:p-4 pointer-events-auto">
-                      <div className="flex flex-col gap-1 sm:gap-2">
-                        <Slider
-                          value={[progress]}
-                          max={100}
-                          step={0.1}
-                          className="cursor-pointer [&>span:first-child]:h-1 [&>span:first-child]:bg-white/30 [&_[role=slider]]:opacity-0 [&>span:first-child_span]:bg-primary"
-                          onValueChange={handleProgressChange}
-                        />
-                        <div className="flex items-center gap-1 sm:gap-2 text-white text-xs sm:text-sm">
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="text-white hover:bg-white/10"
-                            onClick={handlePlayPause}
-                          >
-                            {isPlaying ? <Pause className="w-5 h-5" /> : <Play className="w-5 h-5 fill-white" />}
-                          </Button>
-                          <Button variant="ghost" size="icon" className="text-white hover:bg-white/10">
-                            <SkipForward className="w-5 h-5" />
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="text-white hover:bg-white/10"
-                            onClick={handleMuteToggle}
-                          >
-                            {isMuted ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
-                          </Button>
-                          <div className="text-xs ml-2">
-                            {formatTime(currentTime)} / {formatTime(duration)}
-                          </div>
-                          <div className="flex-1"></div>
-                          {renderSettingsButton()}
-                          <Button variant="ghost" size="icon" className="text-white hover:bg-white/10">
-                            <Maximize className="w-5 h-5" />
-                          </Button>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
                 </div>
               ) : (
                 <Image
@@ -380,63 +391,9 @@ export default function VideoPlayer({
                   className="object-cover opacity-90"
                 />
               )}
-
-              {/* Always show our custom controls */}
-              <div className="absolute inset-0 flex items-center justify-center">
-                {!isPlaying && (
-                  <Button
-                    onClick={handlePlayPause}
-                    className="w-20 h-20 rounded-full bg-primary/90 hover:bg-primary hover:scale-105 transition-all duration-300"
-                  >
-                    <Play className="w-10 h-10 fill-primary-foreground" />
-                  </Button>
-                )}
-              </div>
-
-              {/* Custom control bar */}
-              <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-2 sm:p-4">
-                <div className="flex flex-col gap-1 sm:gap-2">
-                  <Slider
-                    value={[progress]}
-                    max={100}
-                    step={0.1}
-                    className="cursor-pointer [&>span:first-child]:h-1 [&>span:first-child]:bg-white/30 [&_[role=slider]]:opacity-0 [&>span:first-child_span]:bg-primary"
-                    onValueChange={handleProgressChange}
-                  />
-                  <div className="flex items-center gap-1 sm:gap-2 text-white text-xs sm:text-sm">
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="text-white hover:bg-white/10"
-                      onClick={handlePlayPause}
-                    >
-                      {isPlaying ? <Pause className="w-5 h-5" /> : <Play className="w-5 h-5 fill-white" />}
-                    </Button>
-                    <Button variant="ghost" size="icon" className="text-white hover:bg-white/10">
-                      <SkipForward className="w-5 h-5" />
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="text-white hover:bg-white/10"
-                      onClick={handleMuteToggle}
-                    >
-                      {isMuted ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
-                    </Button>
-                    <div className="text-xs ml-2">
-                      {formatTime(currentTime)} / {formatTime(duration)}
-                    </div>
-                    <div className="flex-1"></div>
-                    {renderSettingsButton()}
-                    <Button variant="ghost" size="icon" className="text-white hover:bg-white/10">
-                      <Maximize className="w-5 h-5" />
-                    </Button>
-                  </div>
-                </div>
-              </div>
             </div>
           ) : (
-            // Custom HTML5 video player
+            // HTML5 video player
             <div className="relative w-full aspect-video bg-black">
               <video
                 ref={videoRef}
@@ -448,62 +405,67 @@ export default function VideoPlayer({
                 onTimeUpdate={handleTimeUpdate}
                 onLoadedMetadata={(e) => setDuration(e.currentTarget.duration)}
               />
-
-              {/* Play/pause overlay (shows when video is paused) */}
-              {!isPlaying && (
-                <div className="absolute inset-0 flex items-center justify-center bg-black/30">
-                  <Button
-                    onClick={handlePlayPause}
-                    className="w-20 h-20 rounded-full bg-primary/90 hover:bg-primary hover:scale-105 transition-all duration-300"
-                  >
-                    <Play className="w-10 h-10 fill-primary-foreground" />
-                  </Button>
-                </div>
-              )}
-
-              {/* Custom control bar */}
-              <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-2 sm:p-4">
-                <div className="flex flex-col gap-1 sm:gap-2">
-                  <Slider
-                    value={[progress]}
-                    max={100}
-                    step={0.1}
-                    className="cursor-pointer [&>span:first-child]:h-1 [&>span:first-child]:bg-white/30 [&_[role=slider]]:opacity-0 [&>span:first-child_span]:bg-primary"
-                    onValueChange={handleProgressChange}
-                  />
-                  <div className="flex items-center gap-1 sm:gap-2 text-white text-xs sm:text-sm">
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="text-white hover:bg-white/10"
-                      onClick={handlePlayPause}
-                    >
-                      {isPlaying ? <Pause className="w-5 h-5" /> : <Play className="w-5 h-5 fill-white" />}
-                    </Button>
-                    <Button variant="ghost" size="icon" className="text-white hover:bg-white/10">
-                      <SkipForward className="w-5 h-5" />
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="text-white hover:bg-white/10"
-                      onClick={handleMuteToggle}
-                    >
-                      {isMuted ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
-                    </Button>
-                    <div className="text-xs ml-2">
-                      {formatTime(currentTime)} / {formatTime(duration)}
-                    </div>
-                    <div className="flex-1"></div>
-                    {renderSettingsButton()}
-                    <Button variant="ghost" size="icon" className="text-white hover:bg-white/10">
-                      <Maximize className="w-5 h-5" />
-                    </Button>
-                  </div>
-                </div>
-              </div>
             </div>
           )}
+
+          {/* Play button overlay */}
+          {!isPlaying && (
+            <div className="absolute inset-0 flex items-center justify-center bg-black/30">
+              <Button
+                onClick={handlePlayPause}
+                className="w-20 h-20 rounded-full bg-primary/90 hover:bg-primary hover:scale-105 transition-all duration-300"
+              >
+                <Play className="w-10 h-10 fill-primary-foreground" />
+              </Button>
+            </div>
+          )}
+
+          {/* Single unified control bar */}
+          <div 
+            className={`absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-2 sm:p-4 transition-all duration-300 ${
+              showControls ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-full'
+            }`}
+          >
+            <div className="flex flex-col gap-1 sm:gap-2">
+              <Slider
+                value={[progress]}
+                max={100}
+                step={0.1}
+                className="cursor-pointer [&>span:first-child]:h-1 [&>span:first-child]:bg-white/30 [&_[role=slider]]:opacity-0 [&>span:first-child_span]:bg-primary"
+                onValueChange={handleProgressChange}
+                onValueCommit={handleProgressChange}
+              />
+              <div className="flex items-center gap-1 sm:gap-2 text-white text-xs sm:text-sm">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="text-white hover:bg-white/10"
+                  onClick={handlePlayPause}
+                >
+                  {isPlaying ? <Pause className="w-5 h-5" /> : <Play className="w-5 h-5 fill-white" />}
+                </Button>
+                <Button variant="ghost" size="icon" className="text-white hover:bg-white/10">
+                  <SkipForward className="w-5 h-5" />
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="text-white hover:bg-white/10"
+                  onClick={handleMuteToggle}
+                >
+                  {isMuted ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
+                </Button>
+                <div className="text-xs ml-2">
+                  {formatTime(currentTime)} / {formatTime(duration)}
+                </div>
+                <div className="flex-1"></div>
+                {renderSettingsButton()}
+                <Button variant="ghost" size="icon" className="text-white hover:bg-white/10">
+                  <Maximize className="w-5 h-5" />
+                </Button>
+              </div>
+            </div>
+          </div>
         </div>
       </motion.div>
 
