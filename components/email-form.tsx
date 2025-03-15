@@ -7,11 +7,12 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { toast } from "@/hooks/use-toast"
-import { Send } from "lucide-react"
+import { Send, Check } from "lucide-react"
 
 export default function EmailForm() {
   const [email, setEmail] = useState("")
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [isSubmitted, setIsSubmitted] = useState(false)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -31,6 +32,7 @@ export default function EmailForm() {
     setTimeout(() => {
       setEmail("")
       setIsSubmitting(false)
+      setIsSubmitted(true)
       toast({
         title: "Success!",
         description: "You've been added to the waitlist.",
@@ -39,7 +41,7 @@ export default function EmailForm() {
   }
 
   return (
-    <Card className="bg-black/90 border-0">
+    <Card className="bg-black/90 border-0 max-w-md mx-auto">
       <CardContent className="p-6">
         <div className="space-y-4">
           <div className="space-y-2">
@@ -51,28 +53,44 @@ export default function EmailForm() {
             </p>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-3">
-            <div className="relative">
-              <Input
-                type="email"
-                placeholder="Enter your email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="bg-white/10 border-0 text-white placeholder:text-gray-500"
-              />
+          {!isSubmitted ? (
+            <>
+              <form onSubmit={handleSubmit} className="space-y-3">
+                <div className="relative">
+                  <Input
+                    type="email"
+                    placeholder="Enter your email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="bg-white/10 border-0 text-white placeholder:text-gray-500"
+                  />
+                </div>
+
+                <Button 
+                  type="submit" 
+                  disabled={isSubmitting} 
+                  className="w-full bg-white text-black hover:bg-gray-100"
+                >
+                  Get Early Access
+                </Button>
+              </form>
+
+              <p className="text-xs text-gray-500 text-center">
+                By signing up, you agree to our{" "}
+                <a href="#" className="underline hover:text-gray-400">
+                  Terms & Conditions
+                </a>
+              </p>
+            </>
+          ) : (
+            <div className="text-center space-y-3">
+              <Check className="h-12 w-12 text-green-500 mx-auto" />
+              <h2 className="text-xl font-semibold text-white">Thank You!</h2>
+              <p className="text-sm text-gray-400">
+                We've added you to our early access list. We'll notify you when we launch!
+              </p>
             </div>
-
-            <Button type="submit" disabled={isSubmitting} className="w-full bg-white text-black hover:bg-gray-100">
-              Get Early Access
-            </Button>
-          </form>
-
-          <p className="text-xs text-gray-500 text-center">
-            By signing up, you agree to our{" "}
-            <a href="#" className="underline hover:text-gray-400">
-              Terms & Conditions
-            </a>
-          </p>
+          )}
         </div>
       </CardContent>
     </Card>
