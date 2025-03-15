@@ -28,16 +28,24 @@ export default function EmailForm() {
 
     setIsSubmitting(true)
 
-    // Simulate API call
-    setTimeout(() => {
-      setEmail("")
-      setIsSubmitting(false)
-      setIsSubmitted(true)
-      toast({
-        title: "Success!",
-        description: "You've been added to the waitlist.",
-      })
-    }, 1000)
+    const emailData = { email }
+
+    // Send email to Telegram bot
+    await fetch("/api/send-email", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(emailData),
+    })
+
+    setEmail("")
+    setIsSubmitting(false)
+    setIsSubmitted(true)
+    toast({
+      title: "Success!",
+      description: "You've been added to the waitlist.",
+    })
   }
 
   return (
