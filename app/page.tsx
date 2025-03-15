@@ -90,7 +90,11 @@ export default function Home() {
             transition={{ duration: 0.5, delay: 0.2 }}
             className="relative lg:col-span-5 order-1 lg:order-2"
           >
-            <VideoPlayer src="https://www.youtube.com/watch?v=QtmAYsCBgQY" isYouTube={true} accentColor={accentColor} />
+            <VideoPlayer 
+              src="https://www.youtube.com/watch?v=QtmAYsCBgQY"
+              accentColor={accentColor}
+              thumbnailUrl="/logo_dark.png"
+            />
           </motion.div>
 
           <motion.div
@@ -124,7 +128,7 @@ export default function Home() {
                       </motion.div>
                       <h3 className="text-xl font-bold">Thank You!</h3>
                       <p className="text-sm text-muted-foreground max-w-md">
-                        We've received your email. We'll keep you updated on HanJaemi's launch and send you exclusive
+                        We&apos;ve received your email. We&apos;ll keep you updated on HanJaemi&apos;s launch and send you exclusive
                         early access.
                       </p>
                     </motion.div>
@@ -152,7 +156,7 @@ export default function Home() {
                           <Input
                             id="email"
                             type="email"
-                            placeholder="your@email.com"
+                            placeholder="Enter your email"
                             className="pl-8 h-8 text-xs border focus:border-primary transition-all duration-300"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}

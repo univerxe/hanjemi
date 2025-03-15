@@ -10,9 +10,24 @@ import { getVideoType, getEmbedUrl } from "@/utils/video-helpers"
 import { useTheme } from "next-themes"
 import Script from 'next/script'
 
+// Update YouTube player interface with all required methods
+interface YouTubePlayer {
+  getDuration: () => number;
+  getCurrentTime: () => number;
+  seekTo: (seconds: number, allowSeekAhead: boolean) => void;
+  playVideo: () => void;
+  pauseVideo: () => void;
+  mute: () => void;
+  unMute: () => void;
+}
+
+interface YouTubeEvent {
+  target: YouTubePlayer;
+  data: number;
+}   
+
 interface VideoPlayerProps {
   src: string;
-  isYouTube?: boolean;
   accentColor?: string;
   thumbnailUrl?: string;
   enableAmbientLight?: boolean;
@@ -22,8 +37,7 @@ interface VideoPlayerProps {
 
 export default function VideoPlayer({
   src,
-  isYouTube = false,
-  accentColor = "#3b82f6", // Default accent color (blue)
+  accentColor = "#3b82f6",
   thumbnailUrl = "/wide_dark.png",
   enableAmbientLight = true,
   defaultAmbientMode = true,
@@ -33,24 +47,22 @@ export default function VideoPlayer({
   const [isPlaying, setIsPlaying] = useState<boolean>(false)
   const [showEmbed, setShowEmbed] = useState<boolean>(false)
   const [isMuted, setIsMuted] = useState<boolean>(false)
-  const [dominantColor, setDominantColor] = useState<string>(accentColor)
   const [ambientMode, setAmbientMode] = useState<boolean>(defaultAmbientMode)
   const [showSettings, setShowSettings] = useState<boolean>(false)
+  const [colors, setColors] = useState<Array<string>>([])
   const videoRef = useRef<HTMLVideoElement>(null)
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const animationFrameRef = useRef<number | null>(null)
   const { theme } = useTheme()
-  const [colors, setColors] = useState<Array<string>>([])
   const lastColorUpdateRef = useRef<number>(0)
   const isDarkMode = theme === 'dark'
   const iframeRef = useRef<HTMLIFrameElement>(null)
-  const playerRef = useRef<any>(null)
+  const playerRef = useRef<YouTubePlayer | null>(null)
   const [duration, setDuration] = useState(0)
   const [currentTime, setCurrentTime] = useState(0)
   const [progress, setProgress] = useState(0)
   const [showControls, setShowControls] = useState(true)
   const controlsTimeoutRef = useRef<NodeJS.Timeout | undefined>(undefined)
-  const [isHovering, setIsHovering] = useState(false)
 
   const videoType = getVideoType(src)
   const isEmbeddable = videoType === 'youtube' || videoType === 'vimeo'
@@ -82,11 +94,11 @@ export default function VideoPlayer({
       
       playerRef.current = new window.YT.Player(iframeRef.current, {
         events: {
-          onReady: (event: any) => {
+          onReady: (event: YouTubeEvent) => {
             const duration = event.target.getDuration();
             setDuration(duration);
           },
-          onStateChange: (event: any) => {
+          onStateChange: (event: YouTubeEvent) => {
             setIsPlaying(event.data === window.YT.PlayerState.PLAYING);
           },
         },
@@ -140,67 +152,61 @@ export default function VideoPlayer({
     }
   }
 
-  // Enhanced color sampling function
-  const sampleVideoColor = () => {
-    if (!videoRef.current || !canvasRef.current || !isPlaying || !ambientMode || !isDarkMode) return
+  useEffect(() => {
+    const sampleVideoColor = () => {
+      if (!videoRef.current || !canvasRef.current || !isPlaying || !ambientMode || !isDarkMode) return
 
-    const now = Date.now()
-    if (now - lastColorUpdateRef.current < 100) {
-      animationFrameRef.current = requestAnimationFrame(sampleVideoColor)
-      return
-    }
-    lastColorUpdateRef.current = now
+      const now = Date.now()
+      if (now - lastColorUpdateRef.current < 100) {
+        animationFrameRef.current = requestAnimationFrame(sampleVideoColor)
+        return
+      }
+      lastColorUpdateRef.current = now
 
-    const canvas = canvasRef.current
-    const ctx = canvas.getContext('2d', { willReadFrequently: true })
-    if (!ctx) return
+      const canvas = canvasRef.current
+      const ctx = canvas.getContext('2d', { willReadFrequently: true })
+      if (!ctx) return
 
-    const sampleSize = 50
-    canvas.width = sampleSize
-    canvas.height = sampleSize
+      const sampleSize = 50
+      canvas.width = sampleSize
+      canvas.height = sampleSize
 
-    try {
-      ctx.drawImage(
-        videoRef.current,
-        0, 0, videoRef.current.videoWidth, videoRef.current.videoHeight,
-        0, 0, sampleSize, sampleSize
-      )
+      try {
+        ctx.drawImage(
+          videoRef.current,
+          0, 0, videoRef.current.videoWidth, videoRef.current.videoHeight,
+          0, 0, sampleSize, sampleSize
+        )
 
-      // Sample colors from a 5x5 grid
-      const gridSize = 5
-      const cellSize = sampleSize / gridSize
-      const newColors: string[] = []
+        const gridSize = 5
+        const cellSize = sampleSize / gridSize
+        const newColors: string[] = []
 
-      for (let x = 0; x < gridSize; x++) {
-        for (let y = 0; y < gridSize; y++) {
-          const data = ctx.getImageData(
-            x * cellSize + cellSize / 2,
-            y * cellSize + cellSize / 2,
-            1, 1
-          ).data
+        for (let x = 0; x < gridSize; x++) {
+          for (let y = 0; y < gridSize; y++) {
+            const data = ctx.getImageData(
+              x * cellSize + cellSize / 2,
+              y * cellSize + cellSize / 2,
+              1, 1
+            ).data
 
-          // Calculate color brightness
-          const brightness = (data[0] + data[1] + data[2]) / 3
-          if (brightness > 32) { // Filter out very dark colors
-            newColors.push(`rgba(${data[0]}, ${data[1]}, ${data[2]}, ${ambientIntensity})`)
+            const brightness = (data[0] + data[1] + data[2]) / 3
+            if (brightness > 32) {
+              newColors.push(`rgba(${data[0]}, ${data[1]}, ${data[2]}, ${ambientIntensity})`)
+            }
           }
         }
+
+        if (newColors.length > 0) {
+          setColors(newColors)
+        }
+      } catch (e) {
+        console.error("Error sampling video color:", e)
       }
 
-      if (newColors.length > 0) {
-        setColors(newColors)
-        // Use the most prominent color for the main ambient effect
-        setDominantColor(newColors[0])
-      }
-    } catch (e) {
-      console.error("Error sampling video color:", e)
+      animationFrameRef.current = requestAnimationFrame(sampleVideoColor)
     }
 
-    animationFrameRef.current = requestAnimationFrame(sampleVideoColor)
-  }
-
-  // Start/stop color sampling
-  useEffect(() => {
     if (isPlaying && !isEmbeddable && enableAmbientLight) {
       sampleVideoColor()
     }
@@ -209,9 +215,8 @@ export default function VideoPlayer({
         cancelAnimationFrame(animationFrameRef.current)
       }
     }
-  }, [isPlaying, isEmbeddable, enableAmbientLight, ambientMode])
+  }, [isPlaying, isEmbeddable, enableAmbientLight, ambientMode, isDarkMode, ambientIntensity])
 
-  // Format time helper
   const formatTime = (time: number) => {
     if (!time || isNaN(time)) return "0:00";
     const minutes = Math.floor(time / 60);
@@ -219,7 +224,6 @@ export default function VideoPlayer({
     return `${minutes}:${seconds.toString().padStart(2, '0')}`;
   };
 
-  // Update video progress
   const handleTimeUpdate = () => {
     if (videoRef.current) {
       setCurrentTime(videoRef.current.currentTime)
@@ -227,7 +231,6 @@ export default function VideoPlayer({
     }
   }
 
-  // Handle progress bar change
   const handleProgressChange = (value: number[]) => {
     const newTime = (value[0] / 100) * duration;
     if (isEmbeddable && playerRef.current) {
@@ -241,7 +244,6 @@ export default function VideoPlayer({
     }
   };
 
-  // Add YouTube player event listeners
   useEffect(() => {
     if (!showEmbed || !isEmbeddable || !playerRef.current) return;
 
@@ -262,7 +264,6 @@ export default function VideoPlayer({
     return () => clearInterval(interval);
   }, [showEmbed, isEmbeddable]);
 
-  // Function to handle mouse movement and hover
   const handleMouseMove = () => {
     if (isPlaying) {
       setShowControls(true)
@@ -275,7 +276,6 @@ export default function VideoPlayer({
     }
   }
 
-  // Handle mouse enter/leave for controls area
   const handleMouseLeave = () => {
     if (isPlaying) {
       setShowControls(false)
@@ -285,7 +285,6 @@ export default function VideoPlayer({
     }
   }
 
-  // Initialize controls timeout when video starts playing
   useEffect(() => {
     if (isPlaying) {
       const timer = setTimeout(() => {
@@ -301,7 +300,6 @@ export default function VideoPlayer({
     return <div className="w-full h-full bg-muted animate-pulse rounded-md"></div>
   }
 
-  // Update ambient style with more intense glow
   const ambientStyle: React.CSSProperties = {
     background: ambientMode && isDarkMode
       ? `linear-gradient(45deg, 
@@ -344,7 +342,6 @@ export default function VideoPlayer({
   return (
     <div className="video-container relative w-full p-0 sm:p-2 md:p-4">
       <Script src="https://www.youtube.com/iframe_api" />
-      {/* Hidden canvas for color sampling */}
       <canvas
         ref={canvasRef}
         className="hidden"
@@ -352,15 +349,12 @@ export default function VideoPlayer({
         height="50"
       />
 
-      {/* Video player with glowing border */}
       <motion.div 
         className="relative rounded-none sm:rounded-lg md:rounded-xl overflow-hidden cursor-default"
         onMouseMove={handleMouseMove}
         onMouseLeave={handleMouseLeave}
       >
-        {/* Glowing border container - reduced inset for mobile */}
         <div className="absolute -inset-0 sm:-inset-1 rounded-none sm:rounded-lg md:rounded-xl before:absolute before:inset-0 before:rounded-none sm:before:rounded-lg md:before:rounded-xl before:blur-xl before:bg-gradient-to-r before:from-transparent before:via-white/10 before:to-transparent">
-          {/* Multiple glow layers with reduced blur on mobile */}
           <div className="absolute inset-0 rounded-none sm:rounded-lg md:rounded-xl overflow-hidden">
             <div className="absolute inset-0 blur-[6px] sm:blur-md animate-pulse" style={ambientStyle} />
             <div className="absolute inset-0 blur-lg sm:blur-xl opacity-70" style={ambientStyle} />
@@ -368,7 +362,6 @@ export default function VideoPlayer({
           </div>
         </div>
 
-        {/* Main video container - removed rounded corners on mobile */}
         <div className="relative z-10 rounded-none sm:rounded-lg md:rounded-xl overflow-hidden shadow-2xl bg-black">
           {isEmbeddable ? (
             <div className="relative w-full aspect-video bg-black">
@@ -385,7 +378,7 @@ export default function VideoPlayer({
                 </div>
               ) : (
                 <Image
-                  src={thumbnailUrl || "/placeholder.svg"}
+                  src={thumbnailUrl || "/wide_dark.png"}
                   alt="Video thumbnail"
                   fill
                   className="object-cover opacity-90"
@@ -393,7 +386,6 @@ export default function VideoPlayer({
               )}
             </div>
           ) : (
-            // HTML5 video player
             <div className="relative w-full aspect-video bg-black">
               <video
                 ref={videoRef}
@@ -408,7 +400,6 @@ export default function VideoPlayer({
             </div>
           )}
 
-          {/* Play button overlay */}
           {!isPlaying && (
             <div className="absolute inset-0 flex items-center justify-center bg-black/30">
               <Button
@@ -420,7 +411,6 @@ export default function VideoPlayer({
             </div>
           )}
 
-          {/* Single unified control bar */}
           <div 
             className={`absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-2 sm:p-4 transition-all duration-300 ${
               showControls ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-full'
@@ -479,10 +469,25 @@ export default function VideoPlayer({
   )
 }
 
-// Add TypeScript types for YouTube API
 declare global {
   interface Window {
-    YT: any;
+    YT: {
+      Player: new (
+        iframe: HTMLIFrameElement | null,
+        config: {
+          events: {
+            onReady: (event: YouTubeEvent) => void;
+            onStateChange: (event: YouTubeEvent) => void;
+          };
+        }
+      ) => YouTubePlayer;
+      PlayerState: {
+        PLAYING: number;
+        PAUSED: number;
+        ENDED: number;
+        BUFFERING: number;
+      };
+    };
     onYouTubeIframeAPIReady: () => void;
   }
 }
