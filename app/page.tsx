@@ -40,7 +40,7 @@ export default function Home() {
 
   return (
     <main className="min-h-screen flex flex-col bg-gradient-to-b from-background to-muted/30">
-      <header className="w-full p-4 flex justify-between items-center border-b backdrop-blur-sm bg-background/80 sticky top-0 z-50">
+      <header className="w-full px-3 py-2 sm:p-4 flex justify-between items-center border-b backdrop-blur-sm bg-background/80 sticky top-0 z-50">
         <div className="flex items-center gap-2">
           {/* Logo Placement */}
           <div className="relative h-10 w-10 overflow-hidden rounded-md">
@@ -69,26 +69,35 @@ export default function Home() {
         )}
       </header>
 
-      <div className="flex-1 flex flex-col items-center pt-12 sm:pt-16 p-4 sm:p-8">
+      <div className="flex-1 flex flex-col items-center pt-6 sm:pt-12 p-3 sm:p-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="text-center mb-6 sm:mb-8"
+          className="text-center mb-4 sm:mb-8"
         >
-            <h1 className="text-3xl sm:text-4xl font-bold mb-2 tracking-tight">HanJaemi</h1>
-            <p className="text-lg text-muted-foreground max-w-xl mx-auto">
+          {/* <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-2 tracking-tight">HanJaemi</h1>
+          <p className="text-base sm:text-lg text-muted-foreground max-w-xl mx-auto px-2">
             Your journey to mastering Korean starts here
-            </p>
+          </p> */}
         </motion.div>
 
-        <div className="w-full max-w-6xl grid grid-cols-1 lg:grid-cols-7 gap-6 lg:gap-8 items-center">
-          {/* Enhanced Email Collection Form - Now Smaller */}
+        <div className="w-full max-w-6xl grid grid-cols-1 lg:grid-cols-7 gap-4 sm:gap-6 lg:gap-8 items-start px-2 sm:px-4">
+          {/* Reversed order on mobile for better UX */}
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+            className="relative lg:col-span-5 order-1 lg:order-2"
+          >
+            <VideoPlayer src="https://www.youtube.com/watch?v=xAwB9lQnxAY&pp=ygUac2xvdyBjb2xvciBjaGFuZ2luZyBsaWdodHM%3D" isYouTube={true} accentColor={accentColor} />
+          </motion.div>
+
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-            className="lg:col-span-2"
+            transition={{ duration: 0.5, delay: 0.4 }}
+            className="lg:col-span-2 order-2 lg:order-1"
           >
             <Card className="overflow-hidden border shadow-md backdrop-blur-sm bg-card/80 relative max-w-sm mx-auto lg:mx-0 lg:ml-auto">
               {/* Decorative elements - smaller */}
@@ -185,20 +194,10 @@ export default function Home() {
               </CardContent>
             </Card>
           </motion.div>
-
-          {/* Video Player with enhanced background - Now Larger */}
-          <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.5, delay: 0.4 }}
-            className="relative p-4 lg:col-span-5"
-          >
-            <VideoPlayer src="https://www.youtube.com/watch?v=xAwB9lQnxAY&pp=ygUac2xvdyBjb2xvciBjaGFuZ2luZyBsaWdodHM%3D" isYouTube={true} accentColor={accentColor} />
-          </motion.div>
         </div>
       </div>
 
-      <footer className="w-full p-6 text-center text-sm text-muted-foreground border-t backdrop-blur-sm bg-background/80">
+      <footer className="w-full px-3 py-4 sm:p-6 text-center text-xs sm:text-sm text-muted-foreground border-t backdrop-blur-sm bg-background/80">
         <div className="max-w-6xl mx-auto">© {new Date().getFullYear()} HanJaemi. All rights reserved.</div>
       </footer>
     </main>
