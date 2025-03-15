@@ -224,101 +224,103 @@ export default function CustomVideoPlayer({ src, youtubeId, onColorChange }: Cus
   }
 
   return (
-    <Card className="overflow-hidden h-full flex flex-col">
-      <CardContent className="p-0 flex-1 flex flex-col">
-        <div className="relative flex-1 min-h-[300px] bg-black" onMouseMove={handleMouseMove}>
-          <video
-            ref={videoRef}
-            className="absolute inset-0 w-full h-full object-contain"
-            poster={youtubeId ? getYouTubeThumbnail(youtubeId) : undefined}
-            onTimeUpdate={handleTimeUpdate}
-            onLoadedMetadata={handleLoadedMetadata}
-            onClick={togglePlay}
-            crossOrigin="anonymous"
-            preload="auto"
-          >
-            <source src={src} type="video/mp4" />
-            Your browser does not support the video tag.
-          </video>
+    <Card className="w-full h-auto overflow-hidden">
+      <CardContent className="p-0">
+        <div className="relative w-full" style={{ aspectRatio: '16/9' }}>
+          <div className="absolute inset-0 bg-black" onMouseMove={handleMouseMove}>
+            <video
+              ref={videoRef}
+              className="w-full h-full object-cover"
+              poster={youtubeId ? getYouTubeThumbnail(youtubeId) : undefined}
+              onTimeUpdate={handleTimeUpdate}
+              onLoadedMetadata={handleLoadedMetadata}
+              onClick={togglePlay}
+              crossOrigin="anonymous"
+              preload="auto"
+            >
+              <source src={src} type="video/mp4" />
+              Your browser does not support the video tag.
+            </video>
 
-          {/* Hidden canvas for color extraction */}
-          <canvas ref={canvasRef} width="150" height="100" className="hidden" />
+            {/* Hidden canvas for color extraction */}
+            <canvas ref={canvasRef} width="150" height="100" className="hidden" />
 
-          {/* Video controls */}
-          <div
-            className={`absolute inset-0 flex flex-col justify-between p-4 transition-opacity duration-300 ${
-              showControls ? "opacity-100" : "opacity-0"
-            }`}
-          >
-            {/* Top controls */}
-            <div className="flex justify-end items-center">
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-8 w-8 rounded-full bg-black/50 text-white hover:bg-black/70"
-              >
-                <Settings className="h-4 w-4" />
-              </Button>
-            </div>
+            {/* Video controls */}
+            <div
+              className={`absolute inset-0 flex flex-col justify-between p-4 transition-opacity duration-300 ${
+                showControls ? "opacity-100" : "opacity-0"
+              }`}
+            >
+              {/* Top controls */}
+              <div className="flex justify-end items-center">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-8 w-8 rounded-full bg-black/50 text-white hover:bg-black/70"
+                >
+                  <Settings className="h-4 w-4" />
+                </Button>
+              </div>
 
-            {/* Center play button */}
-            {!isPlaying && (
-              <Button
-                variant="ghost"
-                size="icon"
-                className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 h-16 w-16 rounded-full bg-primary/90 text-primary-foreground hover:bg-primary/100"
-                onClick={togglePlay}
-              >
-                <Play className="h-8 w-8" />
-              </Button>
-            )}
+              {/* Center play button */}
+              {!isPlaying && (
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 h-16 w-16 rounded-full bg-primary/90 text-primary-foreground hover:bg-primary/100"
+                  onClick={togglePlay}
+                >
+                  <Play className="h-8 w-8" />
+                </Button>
+              )}
 
-            {/* Bottom controls */}
-            <div className="space-y-2">
-              <Slider
-                value={[currentTime]}
-                max={duration || 100}
-                step={0.01}
-                onValueChange={handleSeek}
-                className="h-1"
-              />
+              {/* Bottom controls */}
+              <div className="space-y-2">
+                <Slider
+                  value={[currentTime]}
+                  max={duration || 100}
+                  step={0.01}
+                  onValueChange={handleSeek}
+                  className="h-1"
+                />
 
-              <div className="flex justify-between items-center">
-                <div className="flex items-center gap-2">
-                  <Button variant="ghost" size="icon" className="h-8 w-8 text-white" onClick={togglePlay}>
-                    {isPlaying ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
-                  </Button>
-
-                  <Button variant="ghost" size="icon" className="h-8 w-8 text-white" onClick={skipBackward}>
-                    <SkipBack className="h-4 w-4" />
-                  </Button>
-
-                  <Button variant="ghost" size="icon" className="h-8 w-8 text-white" onClick={skipForward}>
-                    <SkipForward className="h-4 w-4" />
-                  </Button>
-
-                  <span className="text-xs text-white">
-                    {formatTime(currentTime)} / {formatTime(duration)}
-                  </span>
-                </div>
-
-                <div className="flex items-center gap-2">
-                  <div className="hidden sm:flex items-center gap-2 w-24">
-                    <Button variant="ghost" size="icon" className="h-8 w-8 text-white" onClick={toggleMute}>
-                      {isMuted ? <VolumeX className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
+                <div className="flex justify-between items-center">
+                  <div className="flex items-center gap-2">
+                    <Button variant="ghost" size="icon" className="h-8 w-8 text-white" onClick={togglePlay}>
+                      {isPlaying ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
                     </Button>
-                    <Slider
-                      value={[isMuted ? 0 : volume]}
-                      max={1}
-                      step={0.01}
-                      onValueChange={handleVolumeChange}
-                      className="h-1"
-                    />
+
+                    <Button variant="ghost" size="icon" className="h-8 w-8 text-white" onClick={skipBackward}>
+                      <SkipBack className="h-4 w-4" />
+                    </Button>
+
+                    <Button variant="ghost" size="icon" className="h-8 w-8 text-white" onClick={skipForward}>
+                      <SkipForward className="h-4 w-4" />
+                    </Button>
+
+                    <span className="text-xs text-white">
+                      {formatTime(currentTime)} / {formatTime(duration)}
+                    </span>
                   </div>
 
-                  <Button variant="ghost" size="icon" className="h-8 w-8 text-white" onClick={handleFullscreen}>
-                    <Maximize className="h-4 w-4" />
-                  </Button>
+                  <div className="flex items-center gap-2">
+                    <div className="hidden sm:flex items-center gap-2 w-24">
+                      <Button variant="ghost" size="icon" className="h-8 w-8 text-white" onClick={toggleMute}>
+                        {isMuted ? <VolumeX className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
+                      </Button>
+                      <Slider
+                        value={[isMuted ? 0 : volume]}
+                        max={1}
+                        step={0.01}
+                        onValueChange={handleVolumeChange}
+                        className="h-1"
+                      />
+                    </div>
+
+                    <Button variant="ghost" size="icon" className="h-8 w-8 text-white" onClick={handleFullscreen}>
+                      <Maximize className="h-4 w-4" />
+                    </Button>
+                  </div>
                 </div>
               </div>
             </div>
