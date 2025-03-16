@@ -6,7 +6,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { toast } from "@/hooks/use-toast"
-import { Send, Check } from "lucide-react"
+import { Send, ArrowRight, Check } from "lucide-react"
 
 export default function EmailForm() {
   const [firstName, setFirstName] = useState("")
@@ -112,42 +112,50 @@ export default function EmailForm() {
           {!isSubmitted ? (
             <>
               <form onSubmit={handleSubmit} className="space-y-4">
-                <div className="flex gap-3">
+                <div className="flex gap-4">
                   <div className="relative flex-1">
-                    <Input
-                      type="text"
-                      placeholder="First name"
-                      value={firstName}
-                      onChange={(e) => setFirstName(e.target.value)}
-                      className="bg-white/10 border-0 text-white placeholder:text-gray-500 rounded-lg px-4 py-2 focus:ring-2 focus:ring-white"
-                    />
+                  <Input
+                  type="text"
+                  placeholder="First name"
+                  value={firstName}
+                  onChange={(e) => setFirstName(e.target.value)}
+                  className="bg-white/10 border-0 text-white placeholder:text-gray-500 rounded-lg px-4 h-8 focus:ring-2 focus:ring-white w-full"
+                  />
                   </div>
                   <div className="relative flex-1">
-                    <Input
-                      type="text"
-                      placeholder="Last name"
-                      value={lastName}
-                      onChange={(e) => setLastName(e.target.value)}
-                      className="bg-white/10 border-0 text-white placeholder:text-gray-500 rounded-lg px-4 py-2 focus:ring-2 focus:ring-white"
-                    />
+                  <Input
+                  type="text"
+                  placeholder="Last name"
+                  value={lastName}
+                  onChange={(e) => setLastName(e.target.value)}
+                  className="bg-white/10 border-0 text-white placeholder:text-gray-500 rounded-lg px-4 h-8 focus:ring-2 focus:ring-white w-full"
+                  />
                   </div>
                 </div>
                 <div className="relative">
                   <Input
-                    type="email"
-                    placeholder="Email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="bg-white/10 border-0 text-white placeholder:text-gray-500 rounded-lg px-4 py-2 focus:ring-2 focus:ring-white"
+                  type="email"
+                  placeholder="Email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="bg-white/10 border-0 text-white placeholder:text-gray-500 rounded-lg px-4 h-8 focus:ring-2 focus:ring-white w-full"
                   />
                 </div>
 
-                <Button 
-                  type="submit" 
-                  disabled={isSubmitting} 
-                  className="w-full bg-white text-black font-semibold hover:bg-gray-100 rounded-lg py-2 transition duration-200"
+                <Button
+                  type="submit"
+                  className="w-full h-8 text-xs font-medium group overflow-hidden relative"
+                  size="sm"
+                  disabled={isSubmitting}
                 >
-                  Get Early Access
+                  <span className="flex items-center justify-center gap-1 group-hover:-translate-y-8 transition-transform duration-300">
+                    Get Early Access
+                    <ArrowRight className="h-3 w-3" />
+                  </span>
+                  <span className="absolute inset-0 flex items-center justify-center gap-1 translate-y-8 group-hover:translate-y-0 transition-transform duration-300">
+                    Send
+                    <Send className="h-3 w-3" />
+                  </span>
                 </Button>
               </form>
 
