@@ -7,6 +7,7 @@ import { Moon, Sun } from "lucide-react"
 import CustomVideoPlayer from "@/components/custom-video-player"
 import EmailForm from "@/components/email-form"
 import Logo from "@/components/logo"
+import Footer from "@/components/footer"
 
 export default function Home() {
   const { theme, setTheme } = useTheme()
@@ -58,6 +59,8 @@ export default function Home() {
           <CustomVideoPlayer src={videoSource} youtubeId={youtubeId} onColorChange={setDominantColor} />
         </div>
       </div>
+
+      <Footer />
     </main>
   )
 }

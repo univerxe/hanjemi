@@ -1,7 +1,6 @@
 "use client"
 
 import type React from "react"
-
 import { useState } from "react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -18,6 +17,24 @@ export default function EmailForm() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+
+    if (!firstName.trim()) {
+      toast({
+        title: "Invalid first name",
+        description: "Please enter your first name",
+        variant: "destructive",
+      })
+      return
+    }
+
+    if (!lastName.trim()) {
+      toast({
+        title: "Invalid last name",
+        description: "Please enter your last name",
+        variant: "destructive",
+      })
+      return
+    }
 
     if (!email.trim() || !email.includes("@")) {
       toast({
@@ -80,12 +97,12 @@ export default function EmailForm() {
   }
 
   return (
-    <Card className="bg-black/90 border-0 max-w-md mx-auto">
+    <Card className="bg-black/90 border-0 max-w-md mx-auto shadow-lg rounded-lg">
       <CardContent className="p-6">
         <div className="space-y-4">
           <div className="space-y-2">
             <h2 className="text-xl font-semibold text-white flex items-center gap-2">
-              Join the Waitlist <Send className="h-4 w-4" />
+              Join the Waitlist <Send className="h-4 w-4 animate-bounce" />
             </h2>
             <p className="text-sm text-gray-400">
               After watching our introduction, be the first to experience HanJaemi when we launch.
@@ -94,7 +111,7 @@ export default function EmailForm() {
 
           {!isSubmitted ? (
             <>
-              <form onSubmit={handleSubmit} className="space-y-3">
+              <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="flex gap-3">
                   <div className="relative flex-1">
                     <Input
@@ -102,7 +119,7 @@ export default function EmailForm() {
                       placeholder="First name"
                       value={firstName}
                       onChange={(e) => setFirstName(e.target.value)}
-                      className="bg-white/10 border-0 text-white placeholder:text-gray-500"
+                      className="bg-white/10 border-0 text-white placeholder:text-gray-500 rounded-lg px-4 py-2 focus:ring-2 focus:ring-white"
                     />
                   </div>
                   <div className="relative flex-1">
@@ -111,7 +128,7 @@ export default function EmailForm() {
                       placeholder="Last name"
                       value={lastName}
                       onChange={(e) => setLastName(e.target.value)}
-                      className="bg-white/10 border-0 text-white placeholder:text-gray-500"
+                      className="bg-white/10 border-0 text-white placeholder:text-gray-500 rounded-lg px-4 py-2 focus:ring-2 focus:ring-white"
                     />
                   </div>
                 </div>
@@ -121,14 +138,14 @@ export default function EmailForm() {
                     placeholder="Email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="bg-white/10 border-0 text-white placeholder:text-gray-500"
+                    className="bg-white/10 border-0 text-white placeholder:text-gray-500 rounded-lg px-4 py-2 focus:ring-2 focus:ring-white"
                   />
                 </div>
 
                 <Button 
                   type="submit" 
                   disabled={isSubmitting} 
-                  className="w-full bg-white text-black hover:bg-gray-100"
+                  className="w-full bg-white text-black font-semibold hover:bg-gray-100 rounded-lg py-2 transition duration-200"
                 >
                   Get Early Access
                 </Button>
@@ -143,7 +160,7 @@ export default function EmailForm() {
             </>
           ) : (
             <div className="text-center space-y-3">
-              <Check className="h-12 w-12 text-green-500 mx-auto" />
+              <Check className="h-12 w-12 text-green-500 mx-auto animate-pulse" />
               <h2 className="text-xl font-semibold text-white">Thank You!</h2>
               <p className="text-sm text-gray-400">
                 We've added you to our early access list. We'll notify you when we launch!
