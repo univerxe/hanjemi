@@ -7,8 +7,10 @@ import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { toast } from "@/hooks/use-toast"
 import { Send, ArrowRight, Check } from "lucide-react"
+import { useTheme } from "next-themes"
 
 export default function EmailForm() {
+  const { theme } = useTheme()
   const [firstName, setFirstName] = useState("")
   const [lastName, setLastName] = useState("")
   const [email, setEmail] = useState("")
@@ -97,14 +99,14 @@ export default function EmailForm() {
   }
 
   return (
-    <Card className="bg-black/90 border-0 max-w-md mx-auto shadow-lg rounded-lg">
+    <Card className={`border-0 max-w-md mx-auto shadow-lg rounded-lg ${theme === 'dark' ? 'bg-black/90' : 'bg-white/90'}`}>
       <CardContent className="p-6">
         <div className="space-y-4">
           <div className="space-y-2">
-            <h2 className="text-xl font-semibold text-white flex items-center gap-2">
+            <h2 className={`text-xl font-semibold flex items-center gap-2 ${theme === 'dark' ? 'text-white' : 'text-black'}`}>
               Join the Waitlist <Send className="h-4 w-4 animate-bounce" />
             </h2>
-            <p className="text-sm text-gray-400">
+            <p className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
               After watching our introduction, be the first to experience HanJaemi when we launch.
             </p>
           </div>
@@ -114,31 +116,31 @@ export default function EmailForm() {
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="flex gap-4">
                   <div className="relative flex-1">
-                  <Input
-                  type="text"
-                  placeholder="First name"
-                  value={firstName}
-                  onChange={(e) => setFirstName(e.target.value)}
-                  className="bg-white/10 border-0 text-white placeholder:text-gray-500 rounded-lg px-4 h-8 focus:ring-2 focus:ring-white w-full"
-                  />
+                    <Input
+                      type="text"
+                      placeholder="First name"
+                      value={firstName}
+                      onChange={(e) => setFirstName(e.target.value)}
+                      className={`border-0 rounded-lg px-4 h-8 focus:ring-2 w-full ${theme === 'dark' ? 'bg-white/20 text-white placeholder:text-gray-500 focus:ring-white' : 'bg-gray-300 text-black placeholder:text-gray-500 focus:ring-black'}`}
+                    />
                   </div>
                   <div className="relative flex-1">
-                  <Input
-                  type="text"
-                  placeholder="Last name"
-                  value={lastName}
-                  onChange={(e) => setLastName(e.target.value)}
-                  className="bg-white/10 border-0 text-white placeholder:text-gray-500 rounded-lg px-4 h-8 focus:ring-2 focus:ring-white w-full"
-                  />
+                    <Input
+                      type="text"
+                      placeholder="Last name"
+                      value={lastName}
+                      onChange={(e) => setLastName(e.target.value)}
+                      className={`border-0 rounded-lg px-4 h-8 focus:ring-2 w-full ${theme === 'dark' ? 'bg-white/20 text-white placeholder:text-gray-500 focus:ring-white' : 'bg-gray-300 text-black placeholder:text-gray-500 focus:ring-black'}`}
+                    />
                   </div>
                 </div>
                 <div className="relative">
                   <Input
-                  type="email"
-                  placeholder="Email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="bg-white/10 border-0 text-white placeholder:text-gray-500 rounded-lg px-4 h-8 focus:ring-2 focus:ring-white w-full"
+                    type="email"
+                    placeholder="Email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className={`border-0 rounded-lg px-4 h-8 focus:ring-2 w-full ${theme === 'dark' ? 'bg-white/20 text-white placeholder:text-gray-500 focus:ring-white' : 'bg-gray-300 text-black placeholder:text-gray-500 focus:ring-black'}`}
                   />
                 </div>
 
@@ -159,7 +161,7 @@ export default function EmailForm() {
                 </Button>
               </form>
 
-              <p className="text-xs text-gray-500 text-center">
+              <p className={`text-xs text-center ${theme === 'dark' ? 'text-gray-500' : 'text-gray-600'}`}>
                 By signing up, you agree to our{" "}
                 <a href="#" className="underline hover:text-gray-400">
                   Terms & Conditions
@@ -169,8 +171,8 @@ export default function EmailForm() {
           ) : (
             <div className="text-center space-y-3">
               <Check className="h-12 w-12 text-green-500 mx-auto animate-pulse" />
-              <h2 className="text-xl font-semibold text-white">Thank You!</h2>
-              <p className="text-sm text-gray-400">
+              <h2 className={`text-xl font-semibold ${theme === 'dark' ? 'text-white' : 'text-black'}`}>Thank You!</h2>
+              <p className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
                 We've added you to our early access list. We'll notify you when we launch!
               </p>
             </div>
