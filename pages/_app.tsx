@@ -1,5 +1,4 @@
 import type { AppProps } from 'next/app'
-import Footer from '@/components/footer'
 import '@/styles/globals.css'
 
 function MyApp({ Component, pageProps }: AppProps) {
@@ -8,7 +7,6 @@ function MyApp({ Component, pageProps }: AppProps) {
       <main className="flex-grow">
         <Component {...pageProps} />
       </main>
-      <Footer />
     </div>
   )
 }
