@@ -10,6 +10,8 @@ import { toast } from "@/hooks/use-toast"
 import { Send, Check } from "lucide-react"
 
 export default function EmailForm() {
+  const [firstName, setFirstName] = useState("")
+  const [lastName, setLastName] = useState("")
   const [email, setEmail] = useState("")
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isSubmitted, setIsSubmitted] = useState(false)
@@ -28,7 +30,7 @@ export default function EmailForm() {
 
     setIsSubmitting(true)
 
-    const emailData = { email }
+    const emailData = { firstName, lastName, email }
     console.log('Email data:', emailData)
 
     try {
@@ -56,6 +58,8 @@ export default function EmailForm() {
         throw new Error('Failed to send email to user')
       }
 
+      setFirstName("")
+      setLastName("")
       setEmail("")
       setIsSubmitting(false)
       setIsSubmitted(true)
@@ -91,10 +95,30 @@ export default function EmailForm() {
           {!isSubmitted ? (
             <>
               <form onSubmit={handleSubmit} className="space-y-3">
+                <div className="flex gap-3">
+                  <div className="relative flex-1">
+                    <Input
+                      type="text"
+                      placeholder="First name"
+                      value={firstName}
+                      onChange={(e) => setFirstName(e.target.value)}
+                      className="bg-white/10 border-0 text-white placeholder:text-gray-500"
+                    />
+                  </div>
+                  <div className="relative flex-1">
+                    <Input
+                      type="text"
+                      placeholder="Last name"
+                      value={lastName}
+                      onChange={(e) => setLastName(e.target.value)}
+                      className="bg-white/10 border-0 text-white placeholder:text-gray-500"
+                    />
+                  </div>
+                </div>
                 <div className="relative">
                   <Input
                     type="email"
-                    placeholder="Enter your email"
+                    placeholder="Email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     className="bg-white/10 border-0 text-white placeholder:text-gray-500"

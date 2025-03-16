@@ -6,7 +6,7 @@ const EMAIL_PASS = process.env.EMAIL_PASS
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'POST') {
-    const { email } = req.body
+    const { firstName, lastName, email } = req.body
 
     if (!EMAIL_USER || !EMAIL_PASS) {
       console.error('Missing email credentials in environment variables')
@@ -29,8 +29,24 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       const mailOptions = {
         from: `"HanJaemi" <${EMAIL_USER}>`,
         to: email,
-        subject: 'Welcome to HanJaemi!',
-        text: 'Thank you for joining the waitlist. We will notify you when we launch!',
+        subject: "🎉 You're In! Welcome to HanJaemi.",
+        text: `Hey ${firstName} ${lastName},
+
+Awesome news—you’re officially on the waitlist for HanJaemi! 🚀 We’re super excited to have you on board.
+
+We’re working hard to bring you something amazing, and because you signed up early, you’ll be one of the first to try it out. Here’s what’s next:
+
+✨ Early Access – You’ll get first access before the public launch.
+🔥 Insider Updates – We’ll keep you in the loop with sneak peeks & cool features.
+🎁 Exclusive Perks – Maybe even some surprises along the way. 😉
+
+Thanks for joining us! We can’t wait to show you what we’ve been working on. Stay tuned! 💙
+
+Cheers,
+HanJaemi Team
+HanJaemi
+https://hanjemi-v1.vercel.app/
+`, 
       }
 
       // Send email

@@ -17,7 +17,7 @@ export default function Home() {
   const videoSource = "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
 
   // YouTube video ID for thumbnail/preview (just for demonstration)
-  const youtubeId = "dQw4w9WgXcQ"
+  const youtubeId = "bDzYX1sRElI"
 
   useEffect(() => {
     setMounted(true)
