@@ -1,40 +1,50 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
+import nodemailer from 'nodemailer'
 
-const TELEGRAM_BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN
-const TELEGRAM_CHAT_ID = process.env.TELEGRAM_CHAT_ID
+const EMAIL_USER = process.env.EMAIL_USER
+const EMAIL_PASS = process.env.EMAIL_PASS
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'POST') {
     const { email } = req.body
 
-    const message = `New email submission: ${email}`
+    if (!EMAIL_USER || !EMAIL_PASS) {
+      console.error('Missing email credentials in environment variables')
+      return res.status(500).json({ error: 'Missing email credentials in environment variables' })
+    }
 
     try {
-      const response = await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
+      // Configure the transporter
+      const transporter = nodemailer.createTransport({
+        host: 'smtp.gmail.com',
+        port: 465,
+        secure: true, // true for port 465 (SSL), false for port 587 (TLS)
+        auth: {
+          user: EMAIL_USER,
+          pass: EMAIL_PASS,
         },
-        body: JSON.stringify({
-          chat_id: TELEGRAM_CHAT_ID,
-          text: message,
-        }),
       })
 
-      if (response.ok) {
-        res.status(200).json({ message: 'Email sent to Telegram' })
-      } else {
-        const errorData = await response.json()
-        console.error('Error sending message to Telegram:', errorData)
-        res.status(500).json({ error: 'Failed to send email to Telegram', details: errorData })
+      // Email details
+      const mailOptions = {
+        from: `"HanJaemi" <${EMAIL_USER}>`,
+        to: email,
+        subject: 'Welcome to HanJaemi!',
+        text: 'Thank you for joining the waitlist. We will notify you when we launch!',
       }
+
+      // Send email
+      const info = await transporter.sendMail(mailOptions)
+
+      console.log('Email sent:', info.response)
+
+      res.status(200).json({ message: 'Email sent to user' })
     } catch (error) {
-      console.error('Error:', error)
-      if (error instanceof Error) {
-        res.status(500).json({ error: 'Failed to send email to Telegram', details: error.message })
-      } else {
-        res.status(500).json({ error: 'Failed to send email to Telegram', details: 'Unknown error' })
-      }
+      console.error('Error sending email:', error)
+      res.status(500).json({
+        error: 'Failed to send email',
+        details: error instanceof Error ? error.message : 'Unknown error',
+      })
     }
   } else {
     res.status(405).json({ error: 'Method not allowed' })

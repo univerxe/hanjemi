@@ -29,23 +29,50 @@ export default function EmailForm() {
     setIsSubmitting(true)
 
     const emailData = { email }
+    console.log('Email data:', emailData)
 
-    // Send email to Telegram bot
-    await fetch("/api/send-email", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(emailData),
-    })
+    try {
+      // Send email to Telegram bot
+      const telegramResponse = await fetch("/api/send-telegram", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(emailData),
+      })
+      if (!telegramResponse.ok) {
+        throw new Error('Failed to send message to Telegram')
+      }
 
-    setEmail("")
-    setIsSubmitting(false)
-    setIsSubmitted(true)
-    toast({
-      title: "Success!",
-      description: "You've been added to the waitlist.",
-    })
+      // Send email to the user
+      const emailResponse = await fetch("/api/send-email", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(emailData),
+      })
+      if (!emailResponse.ok) {
+        throw new Error('Failed to send email to user')
+      }
+
+      setEmail("")
+      setIsSubmitting(false)
+      setIsSubmitted(true)
+      toast({
+        title: "Success!",
+        description: "You've been added to the waitlist.",
+      })
+    } catch (error) {
+      console.error('Error:', error)
+      const errorMessage = error instanceof Error ? error.message : 'Something went wrong';
+      toast({
+        title: "Error",
+        description: errorMessage,
+        variant: "destructive",
+      })
+      setIsSubmitting(false)
+    }
   }
 
   return (
